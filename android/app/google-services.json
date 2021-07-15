@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "279405197006",
+    "project_id": "my-guardian-angels",
+    "storage_bucket": "my-guardian-angels.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:279405197006:android:219f37ee9eb48c950dc29f",
+        "android_client_info": {
+          "package_name": "com.daniyalmalikc.myguardianangel"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "279405197006-phj11hlsea3gpkad228fis0k5vjg677q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.daniyalmalikc.myguardianangel",
+            "certificate_hash": "509f8be262efe825fda275e02b2628be0e45fb22"
+          }
+        },
+        {
+          "client_id": "279405197006-0jf94nna1b5lqab37il6inckp5tqt9ku.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAy2bT0GqQ0MSAZsHRY8HRVf6VT7mpAEOs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "279405197006-0jf94nna1b5lqab37il6inckp5tqt9ku.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
