@@ -10,9 +10,6 @@ import {Avatar, IconButton} from 'react-native-paper';
 //Image
 import Profile from '../../assets/Profile.png';
 
-//Context
-import {AuthContext} from '../../screens/Context/AuthContext';
-
 export default function Header(props) {
   const {title, subtitle} = props;
   return (
@@ -67,10 +64,7 @@ export default function Header(props) {
 }
 
 export function ProfileHeader(props) {
-  const {title} = props;
-
-  //Context
-  const {user} = useContext(AuthContext);
+  const {title, name, email, avatar, navigation} = props;
 
   return (
     <Animatable.View animation={'fadeInDown'} duration={800} delay={1000}>
@@ -117,47 +111,51 @@ export function ProfileHeader(props) {
           <Avatar.Image
             theme={Theme}
             size={100}
-            source={Profile}
+            source={avatar !== '' ? {uri: avatar} : Profile}
             style={{marginHorizontal: 20, marginVertical: 5, elevation: 10}}
           />
           <View style={{flex: 1}}>
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
+            {name ? (
+              <View
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontFamily: 'Montserrat-Bold',
+                    flex: 1,
+                    color: '#fff',
+                  }}>
+                  {name}
+                </Text>
+                <IconButton
+                  icon="pencil"
+                  color="#280056"
+                  size={20}
+                  style={{
+                    marginVertical: 0,
+                    marginHorizontal: 20,
+                    borderWidth: 2,
+                    borderColor: '#280056',
+                  }}
+                  onPress={() => navigation.navigate('EditProfile')}
+                />
+              </View>
+            ) : null}
+            {email ? (
               <Text
                 style={{
-                  fontSize: 20,
-                  fontFamily: 'Montserrat-Bold',
-                  flex: 1,
+                  fontSize: 14,
+                  fontFamily: 'Montserrat-Medium',
                   color: '#fff',
                 }}>
-                {user['name']}
+                {email}
               </Text>
-              {/* <IconButton
-                icon="pencil"
-                color="#280056"
-                size={20}
-                style={{
-                  marginVertical: 0,
-                  marginHorizontal: 20,
-                  borderWidth: 2,
-                  borderColor: '#280056',
-                }}
-                onPress={() => console.log('Pressed')}
-              /> */}
-            </View>
-            <Text
-              style={{
-                fontSize: 14,
-                fontFamily: 'Montserrat-Medium',
-                color: '#fff',
-              }}>
-              {user['email']}
-            </Text>
+            ) : null}
           </View>
         </Animatable.View>
       </LinearGradient>

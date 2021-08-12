@@ -2,7 +2,7 @@ import React, {useContext, useState} from 'react';
 import {ScrollView, View, Text} from 'react-native';
 
 //Style
-import styles, {Theme} from '../../../../style';
+import styles, {Theme, width, height} from '../../../../style';
 import {Searchbar, Button} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -100,6 +100,34 @@ export default function GuardiansList({navigation}) {
           ) : null}
         </View>
       </ScrollView>
+      <View
+        style={{
+          position: 'absolute',
+          width,
+          height,
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: '#00000090',
+          elevation: 5,
+        }}>
+        <Text
+          style={{
+            fontSize: 24,
+            fontFamily: 'Poppins-Bold',
+            color: '#fff',
+            textAlign: 'center',
+            margin: 10,
+            padding: 10,
+            // borderColor: Theme.colors.primary,
+            // borderWidth: 2,
+            textShadowColor: Theme.colors.placeholder,
+            textShadowOffset: {width: 0, height: 0},
+            textShadowRadius: 20,
+          }}>
+          This Screen is under Development. It will be available soon!!
+        </Text>
+      </View>
     </View>
   );
 }

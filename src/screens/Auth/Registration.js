@@ -29,7 +29,7 @@ export default function Registration({navigation}) {
           justifyContent: 'center',
           alignItems: 'center',
         }}>
-        <Image source={Banner01} style={{width: width, height: height / 2.6}} />
+        <Image source={Banner01} style={{width: 340, height: 250}} />
       </View>
 
       <Animatable.View

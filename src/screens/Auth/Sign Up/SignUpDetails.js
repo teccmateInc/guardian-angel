@@ -4,7 +4,7 @@ import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
 //Style
 import Style, {Theme} from '../../../../style';
 import {Button, TextInput, List} from 'react-native-paper';
-import Icon from 'react-native-vector-icons/Feather';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as Animatable from 'react-native-animatable';
 import PhoneInput from 'react-native-phone-number-input';
 import DatePicker from 'react-native-date-picker';
@@ -62,8 +62,8 @@ export default function SignUpDetails({route, navigation}) {
       country,
       city,
       address,
+      navigation,
     );
-    navigation.navigate('Tab');
   };
 
   // console.log('Date --> ' + DOB);

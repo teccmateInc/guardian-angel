@@ -51,24 +51,22 @@ export default function SignUp(props) {
 
   const passErrors = () => {
     return (
-      pass !== confirmPass &&
-      pass !== '' &&
-      confirmPass !== '' &&
+      (pass !== confirmPass && pass !== '' && confirmPass !== '') ||
       pass.length <= 8
     );
   };
 
-  console.log(
-    valid !== false &&
-      email !== '' &&
-      pass !== '' &&
-      confirmPass !== '' &&
-      username !== '' &&
-      confirmPass === pass &&
-      pass.length >= 8
-      ? 'False'
-      : 'True',
-  );
+  // console.log(
+  //   valid !== false &&
+  //     email !== '' &&
+  //     pass !== '' &&
+  //     confirmPass !== '' &&
+  //     username !== '' &&
+  //     confirmPass === pass &&
+  //     pass.length >= 8
+  //     ? 'False'
+  //     : 'True',
+  // );
 
   return (
     <View>
@@ -138,7 +136,7 @@ export default function SignUp(props) {
             }}
             mode="outlined"
             theme={Theme}
-            label="Name"
+            label="Full Name"
             value={username}
             onChangeText={text => setName(text)}
           />
@@ -172,7 +170,7 @@ export default function SignUp(props) {
             type="error"
             visible={emailErrors()}
             style={{marginHorizontal: 20}}>
-            Email address is invalid!
+            * Email address is invalid!
           </HelperText>
         </Animatable.View>
         <Animatable.View
@@ -191,6 +189,8 @@ export default function SignUp(props) {
             justifyContent: 'center',
             alignItems: 'center',
             marginVertical: 5,
+            marginHorizontal: 25,
+            flex: 1,
           }}>
           <TextInput
             left={
@@ -201,7 +201,7 @@ export default function SignUp(props) {
               />
             }
             secureTextEntry={true}
-            style={{width: width / 2.48, marginHorizontal: 5}}
+            style={{flex: 1, marginRight: 5}}
             mode="outlined"
             theme={Theme}
             label="Password"
@@ -217,7 +217,7 @@ export default function SignUp(props) {
               />
             }
             secureTextEntry={true}
-            style={{width: width / 2.48, marginHorizontal: 5}}
+            style={{flex: 1, marginLeft: 5}}
             mode="outlined"
             theme={Theme}
             label="Confirm"
@@ -229,7 +229,9 @@ export default function SignUp(props) {
           type="error"
           visible={passErrors()}
           style={{marginHorizontal: 20}}>
-          Those passwords didn’t match. Try again
+          {pass.length <= 8
+            ? '* your password should be at least enter 8 character long!'
+            : '* Those passwords didn’t match. Try again!'}
         </HelperText>
 
         <Animatable.View

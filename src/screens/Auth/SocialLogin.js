@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity, Platform} from 'react-native';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as Animatable from 'react-native-animatable';
 
-import {LoginManager, AccessToken} from 'react-native-fbsdk-next';
-import auth from '@react-native-firebase/auth';
+// import {LoginManager, AccessToken} from 'react-native-fbsdk-next';
+// import auth from '@react-native-firebase/auth';
 
 const Social = [
   {
@@ -29,37 +29,38 @@ const Social = [
 ];
 
 const handleFBLogin = async () => {
-  try {
-    // Login the User and get his public profile and email id.
-    const result = await LoginManager.logInWithPermissions([
-      'public_profile',
-      'email',
-    ]);
+  alert('Facebook Login!');
+  // try {
+  //   // Login the User and get his public profile and email id.
+  //   const result = await LoginManager.logInWithPermissions([
+  //     'public_profile',
+  //     'email',
+  //   ]);
 
-    // If the user cancels the login process, the result will have a
-    // isCancelled boolean set to true. We can use that to break out of this function.
-    if (result.isCancelled) {
-      throw 'User cancelled the login process';
-    }
+  //   // If the user cancels the login process, the result will have a
+  //   // isCancelled boolean set to true. We can use that to break out of this function.
+  //   if (result.isCancelled) {
+  //     throw 'User cancelled the login process';
+  //   }
 
-    // Get the Access Token
-    const data = await AccessToken.getCurrentAccessToken();
+  //   // Get the Access Token
+  //   const data = await AccessToken.getCurrentAccessToken();
 
-    // If we don't get the access token, then something has went wrong.
-    if (!data) {
-      throw 'Something went wrong obtaining access token';
-    }
+  //   // If we don't get the access token, then something has went wrong.
+  //   if (!data) {
+  //     throw 'Something went wrong obtaining access token';
+  //   }
 
-    // Use the Access Token to create a facebook credential.
-    const facebookCredential = auth.FacebookAuthProvider.credential(
-      data.accessToken,
-    );
+  //   // Use the Access Token to create a facebook credential.
+  //   const facebookCredential = auth.FacebookAuthProvider.credential(
+  //     data.accessToken,
+  //   );
 
-    // Use the facebook credential to sign in to the application.
-    return auth().signInWithCredential(facebookCredential);
-  } catch (error) {
-    alert(error);
-  }
+  //   // Use the facebook credential to sign in to the application.
+  //   return auth().signInWithCredential(facebookCredential);
+  // } catch (error) {
+  //   alert(error);
+  // }
 };
 
 export default function SocialLogin(props) {

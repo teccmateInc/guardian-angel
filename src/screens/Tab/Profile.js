@@ -26,7 +26,13 @@ export default function Profile({navigation}) {
 
   return (
     <View style={{backgroundColor: Theme.colors.accent + 80, flex: 1}}>
-      <ProfileHeader title="My Profile" />
+      <ProfileHeader
+        title="My Profile"
+        name={user['name']}
+        email={user['email']}
+        avatar={user['avatar']}
+        navigation={navigation}
+      />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{marginVertical: 20}}>
           <Text style={Style.H3}>Evidence Time Period:</Text>

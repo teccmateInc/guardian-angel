@@ -13,6 +13,8 @@ import {createStackNavigator} from '@react-navigation/stack';
 import Splash from './src/screens/Splash';
 import Registration from './src/screens/Auth/Registration';
 import SignUpDetails from './src/screens/Auth/Sign Up/SignUpDetails';
+// Edit Profile
+import EditProfile from './src/screens/Tab/Profile/EditProfile';
 //Tab
 import Tab from './src/screens/Navigation/Tab';
 
@@ -47,6 +49,11 @@ export default function App() {
             name="Tab"
             component={Tab}
             // options={{headerShown: true}}
+          />
+          <Stack.Screen
+            name="EditProfile"
+            component={EditProfile}
+            options={{headerShown: false}}
           />
         </Stack.Navigator>
       </NavigationContainer>

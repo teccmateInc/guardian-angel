@@ -37,6 +37,7 @@ export default function Home({navigation}) {
   );
   const [visible, setVisible] = useState(false);
   const [visibleTab, setVisibleTab] = useState(true);
+  const [visibleStatus, setVisibleStatus] = useState(false);
 
   navigation.setOptions({
     tabBarVisible: visibleTab,
@@ -67,18 +68,19 @@ export default function Home({navigation}) {
       : console.log('ACCESS LOCATION permission denied');
   }, []);
 
-  const handleAudioRec = async () => {
-    await handleConsole();
-  };
+  // const handleAudioRec = async () => {
+  //   await handleConsole();
+  // };
 
-  const handleConsole = async () => {
-    await console.log(audRecName);
-  };
+  // const handleConsole = async () => {
+  //   await console.log(audRecName);
+  // };
 
   const StartStopVidRec = async () => {
     // this.videoRecorder.open({maxLength: 30}, data => {
     //   console.log('captured data', data);
     // });
+    setVisibleStatus(true);
     videoRecorder.current.open(
       {maxLength: 60},
       // this.videoRecorder.startCapture,
@@ -87,6 +89,9 @@ export default function Home({navigation}) {
         handleVidRec(data.uri);
       },
     );
+    setTimeout(() => {
+      setVisibleStatus(false);
+    }, 60 * 1000);
     // this.videoRecorder.open()
     // showModal();
     // setTimeout(async () => {
@@ -107,6 +112,7 @@ export default function Home({navigation}) {
     showModal();
 
     setVisibleTab(false);
+    setVisibleStatus(true);
     audioRecorderPlayer.startRecorder(Path());
     audioRecorderPlayer.addRecordBackListener();
     setTimeout(async () => {
@@ -136,6 +142,7 @@ export default function Home({navigation}) {
     alert('Success!');
     hideModal();
     setVisibleTab(true);
+    setVisibleStatus(false);
   };
 
   // const Timer = () => {
@@ -145,7 +152,11 @@ export default function Home({navigation}) {
 
   return (
     <View style={{flex: 1}}>
-      <StatusBar backgroundColor="#000" />
+      <StatusBar
+        backgroundColor="#000"
+        barStyle="dark-content"
+        // hidden={visibleStatus}
+      />
       <Header
         title="Record"
         subtitle="Record your evidence securely & privately."
@@ -177,8 +188,8 @@ export default function Home({navigation}) {
         </View>
         <View>
           <Text style={Style.para}>
-            Your Default Recording timing is {TimePeriod} mins. You can increase
-            or decrease this Time period from Profile Settings.
+            Your Default Recording timing is {TimePeriod} seconds. You can
+            increase or decrease this Time period from Profile Settings.
           </Text>
         </View>
         <View
