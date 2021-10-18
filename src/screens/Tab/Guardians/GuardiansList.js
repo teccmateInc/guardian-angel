@@ -100,7 +100,7 @@ export default function GuardiansList({navigation}) {
           ) : null}
         </View>
       </ScrollView>
-      <View
+      {/* <View
         style={{
           position: 'absolute',
           width,
@@ -127,7 +127,7 @@ export default function GuardiansList({navigation}) {
           }}>
           This Screen is under Development. It will be available soon!!
         </Text>
-      </View>
+      </View> */}
     </View>
   );
 }

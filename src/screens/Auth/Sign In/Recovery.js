@@ -2,17 +2,20 @@ import React, {useState, useContext} from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
 
 //Style
-import {Theme} from '../../../../style';
-
-import {Button, TextInput} from 'react-native-paper';
-import Icon from 'react-native-vector-icons/Feather';
+import Style, {Theme} from '../../../../style';
 import * as Animatable from 'react-native-animatable';
+
+//Component
+//--> Button
+import Btn from '../../../components/Button/Btn';
+//--> Text Input
+import TextInput from '../../../components/Input/TextInputField';
 
 //Context
 import {AuthContext} from '../../Context/AuthContext';
 
 export default function Recovery(props) {
-  const {navigation, setActive} = props;
+  const {setActive} = props;
 
   //Context
   const {recoverPass} = useContext(AuthContext);
@@ -41,67 +44,31 @@ export default function Recovery(props) {
     }, 1500);
   };
 
+  //Animation
+  const fadeIn =
+    status === true ? 'fadeIn' : status === false ? 'fadeOut' : null;
+  const fadeRight =
+    status === true ? 'fadeInRight' : status === false ? 'fadeOutRight' : null;
+  const fadeUp =
+    status === true ? 'fadeInUp' : status === false ? 'fadeOutDown' : null;
+
   return (
     <View>
       <Animatable.View
-        animation={
-          status === true
-            ? 'fadeInRight'
-            : status === false
-            ? 'fadeOutRight'
-            : null
-        }
+        animation={fadeRight}
         duration={800}
         delay={1000}
-        style={{marginHorizontal: 20, marginBottom: 10}}>
-        <Text
-          style={{
-            fontSize: 50,
-            // fontWeight: 'bold',
-            color: Theme.colors.placeholder,
-            letterSpacing: 2,
-            fontFamily: 'Montserrat-Bold',
-          }}>
-          Recover
-        </Text>
-        <Animatable.View
-          animation={
-            status === true
-              ? 'fadeInUp'
-              : status === false
-              ? 'fadeOutDown'
-              : null
-          }
-          duration={800}
-          delay={1400}>
-          <Text
-            style={{
-              fontSize: 32,
-              color: Theme.colors.primary,
-              lineHeight: 40,
-              fontFamily: 'Montserrat-Light',
-            }}>
-            Your Password!
-          </Text>
+        style={Style.AuthView}>
+        <Text style={Style.AuthHeading}>Recover</Text>
+
+        <Animatable.View animation={fadeUp} duration={800} delay={1400}>
+          <Text style={Style.AuthSubHeading}>Your Password!</Text>
         </Animatable.View>
       </Animatable.View>
-      <Animatable.View
-        animation={
-          status === true ? 'fadeInUp' : status === false ? 'fadeOutDown' : null
-        }
-        duration={800}
-        delay={1000}>
+
+      <Animatable.View animation={fadeUp} duration={800} delay={1000}>
         <TextInput
-          left={
-            <TextInput.Icon
-              name={() => (
-                <Icon name="mail" size={20} color={Theme.colors.primary} />
-              )}
-            />
-          }
-          style={{marginHorizontal: 25, marginVertical: 5}}
-          mode="outlined"
-          theme={Theme}
+          leftIcon="email"
           label="Registered Email"
           placeholder="Enter your Registered Email!"
           value={email}
@@ -110,63 +77,32 @@ export default function Recovery(props) {
       </Animatable.View>
 
       <Animatable.View
-        animation={
-          status === true ? 'fadeIn' : status === false ? 'fadeOut' : null
-        }
+        animation={fadeIn}
         duration={800}
         delay={800}
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <Text
-          style={{
-            margin: 20,
-            textAlign: 'center',
-            color: '#aaa',
-          }}>
+        style={Style.flexContainer}>
+        <Text style={Style.AuthPara}>
           After pressing the button Please{' '}
           <Text style={{color: Theme.colors.primary}}>check your Email!</Text>{' '}
           If you can't find our email then check your{' '}
           <Text style={{color: Theme.colors.primary}}>SPAM mailBox!</Text>
         </Text>
-        <Button
-          style={{width: 300, margin: 5}}
-          color={Theme.colors.primary}
+        <Btn
           icon="link"
-          mode="contained"
-          onPress={() => handleRecoverPass()}>
-          Send Me Recovery Link!
-        </Button>
+          onPress={() => handleRecoverPass()}
+          label="Send Me Recovery Link!"
+        />
       </Animatable.View>
 
       <Animatable.View
-        animation={
-          status === true ? 'fadeIn' : status === false ? 'fadeOut' : null
-        }
+        animation={fadeIn}
         duration={800}
         delay={800}
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <Text
-          style={{
-            margin: 20,
-            textAlign: 'center',
-            color: '#aaa',
-          }}>
+        style={Style.flexContainer}>
+        <Text style={Style.AuthPara}>
           If you just got it. Then{' '}
           <TouchableOpacity onPress={() => switchBTWScreen()}>
-            <Text
-              style={{
-                color: Theme.colors.primary,
-                top: 3,
-              }}>
-              Sign In!
-            </Text>
+            <Text style={Style.AuthParaHighlight}>Sign In!</Text>
           </TouchableOpacity>
         </Text>
       </Animatable.View>

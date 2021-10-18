@@ -30,6 +30,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  flexEndContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+  },
   H1: {
     fontSize: 36,
     color: Theme.colors.placeholder,
@@ -71,7 +76,11 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginVertical: 5,
   },
-
+  TextShadow: {
+    textShadowOffset: {width: 2.5, height: 2.5},
+    textShadowColor: '#ddd',
+    textShadowRadius: 5,
+  },
   para: {
     fontSize: 12,
     fontFamily: 'Poppins-Regular',
@@ -82,7 +91,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignSelf: 'center',
-    width: width - 40,
+    width: width - 80,
     elevation: 5,
     shadowColor: '#000',
     shadowOffset: {
@@ -91,6 +100,47 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.29,
     shadowRadius: 4.65,
+  },
+  paper: {
+    margin: 10,
+    paddingVertical: 10,
+    borderWidth: 2,
+    borderColor: Theme.colors.shadow,
+    borderRadius: 5,
+  },
+  AuthView: {
+    marginHorizontal: 20,
+    marginVertical: 10,
+  },
+  AuthHeading: {
+    fontSize: 50,
+    color: Theme.colors.placeholder,
+    letterSpacing: 2,
+    fontFamily: 'Montserrat-Bold',
+  },
+  AuthSubHeading: {
+    fontSize: 32,
+    color: Theme.colors.primary,
+    lineHeight: 40,
+    fontFamily: 'Montserrat-Light',
+  },
+  AuthPassword: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 5,
+    marginHorizontal: 25,
+    flex: 1,
+  },
+  AuthPara: {
+    margin: 20,
+    textAlign: 'center',
+    color: '#aaa',
+  },
+  AuthParaHighlight: {
+    color: Theme.colors.primary,
+    top: 3,
   },
 });
 

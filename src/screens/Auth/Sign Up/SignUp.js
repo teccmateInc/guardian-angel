@@ -2,12 +2,13 @@ import React, {useState, useRef, useContext} from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
 
 //Style
-import {Theme, width} from '../../../../style';
-
-import {Button, TextInput, HelperText} from 'react-native-paper';
-import Icon from 'react-native-vector-icons/Feather';
+import Style, {Theme} from '../../../../style';
+import {HelperText} from 'react-native-paper';
 import * as Animatable from 'react-native-animatable';
-// import PhoneInput from 'react-native-phone-number-input';
+
+//Component
+import TextInput from '../../../components/Input/TextInputField';
+import Btn from '../../../components/Button/Btn';
 
 //Context
 import {AuthContext} from '../../Context/AuthContext';
@@ -24,6 +25,7 @@ export default function SignUp(props) {
   const [email, setEmail] = useState('');
   const [valid, setValid] = useState(false);
   const [pass, setPass] = useState('');
+  const [privacy, setPrivacy] = useState(true);
   const [confirmPass, setConfirmPass] = useState('');
 
   const validateEmail = text => {
@@ -56,112 +58,52 @@ export default function SignUp(props) {
     );
   };
 
-  // console.log(
-  //   valid !== false &&
-  //     email !== '' &&
-  //     pass !== '' &&
-  //     confirmPass !== '' &&
-  //     username !== '' &&
-  //     confirmPass === pass &&
-  //     pass.length >= 8
-  //     ? 'False'
-  //     : 'True',
-  // );
+  const btnActivity =
+    valid !== false &&
+    email !== '' &&
+    pass !== '' &&
+    confirmPass !== '' &&
+    username !== '' &&
+    confirmPass === pass &&
+    pass.length >= 8
+      ? false
+      : true;
+
+  //Animation
+  const fadeIn =
+    status === true ? 'fadeIn' : status === false ? 'fadeOut' : null;
+  const fadeRight =
+    status === true ? 'fadeInRight' : status === false ? 'fadeOutRight' : null;
+  const fadeUp =
+    status === true ? 'fadeInUp' : status === false ? 'fadeOutDown' : null;
 
   return (
     <View>
       <View style={{display: 'flex', justifyContent: 'center'}}>
         <Animatable.View
-          animation={
-            status === true
-              ? 'fadeInRight'
-              : status === false
-              ? 'fadeOutRight'
-              : null
-          }
+          animation={fadeRight}
           duration={800}
           delay={1000}
-          style={{marginHorizontal: 20, marginBottom: 10}}>
-          <Text
-            style={{
-              fontSize: 50,
-              color: Theme.colors.placeholder,
-              letterSpacing: 2,
-              fontFamily: 'Montserrat-Bold',
-            }}>
-            Create
-          </Text>
-          <Animatable.View
-            animation={
-              status === true
-                ? 'fadeInUp'
-                : status === false
-                ? 'fadeOutDown'
-                : null
-            }
-            duration={800}
-            delay={1400}>
-            <Text
-              style={{
-                fontSize: 32,
-                color: Theme.colors.primary,
-                lineHeight: 40,
-                fontFamily: 'Montserrat-Light',
-              }}>
-              Your own Account!
-            </Text>
+          style={Style.AuthView}>
+          <Text style={Style.AuthHeading}>Create</Text>
+
+          <Animatable.View animation={fadeUp} duration={800} delay={1400}>
+            <Text style={Style.AuthSubHeading}>Your own Account!</Text>
           </Animatable.View>
         </Animatable.View>
-        <Animatable.View
-          animation={
-            status === true
-              ? 'fadeInUp'
-              : status === false
-              ? 'fadeOutDown'
-              : null
-          }
-          duration={800}
-          delay={1200}>
+
+        <Animatable.View animation={fadeUp} duration={800} delay={1200}>
           <TextInput
-            left={
-              <TextInput.Icon
-                name={() => (
-                  <Icon name="user" size={20} color={Theme.colors.primary} />
-                )}
-              />
-            }
-            style={{
-              marginHorizontal: 25,
-              marginVertical: 5,
-            }}
-            mode="outlined"
-            theme={Theme}
+            leftIcon="account"
             label="Full Name"
             value={username}
             onChangeText={text => setName(text)}
           />
         </Animatable.View>
-        <Animatable.View
-          animation={
-            status === true
-              ? 'fadeInUp'
-              : status === false
-              ? 'fadeOutDown'
-              : null
-          }
-          duration={800}
-          delay={1400}>
+
+        <Animatable.View animation={fadeUp} duration={800} delay={1400}>
           <TextInput
-            left={
-              <TextInput.Icon
-                name={() => (
-                  <Icon name="mail" size={20} color={Theme.colors.primary} />
-                )}
-              />
-            }
-            style={{marginHorizontal: 25, marginVertical: 5}}
-            mode="outlined"
-            theme={Theme}
+            leftIcon="email"
             label="Email"
             value={email}
             onChangeText={text => validateEmail(text)}
@@ -173,136 +115,71 @@ export default function SignUp(props) {
             * Email address is invalid!
           </HelperText>
         </Animatable.View>
+
         <Animatable.View
-          animation={
-            status === true
-              ? 'fadeInUp'
-              : status === false
-              ? 'fadeOutDown'
-              : null
-          }
+          animation={fadeUp}
           duration={800}
           delay={1600}
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginVertical: 5,
-            marginHorizontal: 25,
-            flex: 1,
-          }}>
+          style={Style.AuthPassword}>
           <TextInput
-            left={
-              <TextInput.Icon
-                name={() => (
-                  <Icon name="lock" size={20} color={Theme.colors.primary} />
-                )}
-              />
-            }
-            secureTextEntry={true}
             style={{flex: 1, marginRight: 5}}
-            mode="outlined"
-            theme={Theme}
+            leftIcon="lock"
+            rightIcon={privacy ? 'eye' : 'eye-off'}
+            rightIconPress={() => setPrivacy(!privacy)}
+            secureTextEntry={privacy}
             label="Password"
             value={pass}
             onChangeText={text => setPass(text)}
           />
           <TextInput
-            left={
-              <TextInput.Icon
-                name={() => (
-                  <Icon name="lock" size={20} color={Theme.colors.primary} />
-                )}
-              />
-            }
-            secureTextEntry={true}
             style={{flex: 1, marginLeft: 5}}
-            mode="outlined"
-            theme={Theme}
+            leftIcon="lock"
+            secureTextEntry={privacy}
             label="Confirm"
             value={confirmPass}
             onChangeText={text => setConfirmPass(text)}
           />
         </Animatable.View>
-        <HelperText
-          type="error"
-          visible={passErrors()}
-          style={{marginHorizontal: 20}}>
-          {pass.length <= 8
-            ? '* your password should be at least enter 8 character long!'
-            : '* Those passwords didn’t match. Try again!'}
-        </HelperText>
+
+        <Animatable.View animation={fadeUp} duration={800} delay={1600}>
+          <HelperText
+            type="error"
+            visible={passErrors()}
+            style={{marginHorizontal: 20}}>
+            {pass.length <= 8
+              ? '* your password should be at least enter 8 character long!'
+              : '* Those passwords didn’t match. Try again!'}
+          </HelperText>
+        </Animatable.View>
 
         <Animatable.View
-          animation={
-            status === true ? 'fadeIn' : status === false ? 'fadeOut' : null
-          }
+          animation={fadeIn}
           duration={800}
           delay={800}
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <Text
-            style={{
-              margin: 20,
-              textAlign: 'center',
-              color: '#aaa',
-            }}>
+          style={Style.flexContainer}>
+          <Text style={Style.AuthPara}>
             By Signing Up you agree to all{' '}
             <Text style={{color: Theme.colors.primary}}>
               Terms and Condition
             </Text>{' '}
             of Guardian Angel
           </Text>
-          <Button
-            style={{width: 300, margin: 5}}
-            color={Theme.colors.primary}
+          <Btn
             icon="login"
-            mode="contained"
-            disabled={
-              valid !== false &&
-              email !== '' &&
-              pass !== '' &&
-              confirmPass !== '' &&
-              username !== '' &&
-              confirmPass === pass &&
-              pass.length >= 8
-                ? false
-                : true
-            }
-            onPress={() => handelSignUp('Sign Up')}>
-            Sign Up
-          </Button>
+            disabled={btnActivity}
+            onPress={() => handelSignUp()}
+            label="Sign Up"
+          />
         </Animatable.View>
         <Animatable.View
-          animation={
-            status === true ? 'fadeIn' : status === false ? 'fadeOut' : null
-          }
+          animation={fadeIn}
           duration={800}
           delay={800}
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <Text
-            style={{
-              margin: 20,
-              textAlign: 'center',
-              color: '#aaa',
-            }}>
+          style={Style.flexContainer}>
+          <Text style={Style.AuthPara}>
             Already have an account.{' '}
             <TouchableOpacity onPress={() => navigateSignIn()}>
-              <Text
-                style={{
-                  color: Theme.colors.primary,
-                  top: 3,
-                }}>
-                Sign In!
-              </Text>
+              <Text style={Style.AuthParaHighlight}>Sign In!</Text>
             </TouchableOpacity>
           </Text>
         </Animatable.View>

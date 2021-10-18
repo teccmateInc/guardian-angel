@@ -16,7 +16,10 @@ import Style, {Theme, width, height} from '../../../style';
 import {Button, Modal, Portal, Provider} from 'react-native-paper';
 
 //Components
+//--> Header
 import Header from '../../components/Header/Header';
+//--> Button
+import Btn from '../../components/Button/Btn';
 
 //Context
 import {AuthContext} from '../Context/AuthContext';
@@ -68,42 +71,15 @@ export default function Home({navigation}) {
       : console.log('ACCESS LOCATION permission denied');
   }, []);
 
-  // const handleAudioRec = async () => {
-  //   await handleConsole();
-  // };
-
-  // const handleConsole = async () => {
-  //   await console.log(audRecName);
-  // };
-
   const StartStopVidRec = async () => {
-    // this.videoRecorder.open({maxLength: 30}, data => {
-    //   console.log('captured data', data);
-    // });
+    videoRecorder.current.recordOptions({quality});
     setVisibleStatus(true);
-    videoRecorder.current.open(
-      {maxLength: 60},
-      // this.videoRecorder.startCapture,
-      data => {
-        // console.log('captured data', data.uri);
-        handleVidRec(data.uri);
-      },
-    );
+    videoRecorder.current.open({maxLength: 60}, data => {
+      handleVidRec(data.uri);
+    });
     setTimeout(() => {
       setVisibleStatus(false);
     }, 60 * 1000);
-    // this.videoRecorder.open()
-    // showModal();
-    // setTimeout(async () => {
-    //   await hideModal();
-    // }, 30000);
-    // VidRecorder.open({maxLength: 30}, data => {
-    //   console.log('captured data', data);
-    // });
-    // VidRecorder.current
-    // setTimeout(async () => {
-    //   await VidRecorder.stop();
-    // }, 60000);
   };
 
   const StartStopAudioRec = async () => {
@@ -169,22 +145,16 @@ export default function Home({navigation}) {
             alignItems: 'center',
             flex: 1,
           }}>
-          <Button
-            style={{width: 300, margin: 10}}
-            color={Theme.colors.primary}
+          <Btn
             icon="video"
-            mode="contained"
-            onPress={() => StartStopVidRec()}>
-            Video Record Evidence
-          </Button>
-          <Button
-            style={{width: 300, margin: 10}}
-            color={Theme.colors.primary}
+            onPress={() => StartStopVidRec()}
+            label="Video Record Evidence"
+          />
+          <Btn
             icon="microphone"
-            mode="contained"
-            onPress={() => StartStopAudioRec()}>
-            Audio Record Evidence
-          </Button>
+            onPress={() => StartStopAudioRec()}
+            label="Audio Record Evidence"
+          />
         </View>
         <View>
           <Text style={Style.para}>

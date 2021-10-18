@@ -4,14 +4,11 @@ import React, {createContext, useState, useContext, useEffect} from 'react';
 import {AuthContext} from './AuthContext';
 import {LocationContext} from './LocationContext';
 
-// --> Create Context
-export const RecordContext = createContext();
-
 //Firebase Storage
 import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
 
-import {EvidenceList} from '../../assets/DemoData';
+// import {EvidenceList} from '../../assets/DemoData';
 
 const RecordContextProvider = props => {
   const [date, setDate] = useState(new Date());
@@ -28,8 +25,6 @@ const RecordContextProvider = props => {
     await storeRef.getDownloadURL().then(url => {
       firestore()
         .collection('Recordings')
-        .doc(user['uid'])
-        .collection('Rec')
         .add({
           recURL: url,
           recName: `Rec-AUD-${audRecName}`,
@@ -38,6 +33,7 @@ const RecordContextProvider = props => {
           createdAt: date,
           longitude: currentLongitude,
           latitude: currentLatitude,
+          uid: user['uid'],
         })
         .then(() => {
           alert('Evidence added!');
@@ -46,24 +42,25 @@ const RecordContextProvider = props => {
   };
 
   const handleVidRec = async uploadUri => {
-    const audRecName = `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}${
-      user['phoneNumber']
-    }-${new Date().getTime()}-${user['DOB']}`;
-    const storeRef = storage().ref(`recordings/Rec-VID-${audRecName}`);
+    const audRecName = `${date.getDate()}-${
+      date.getMonth() + 1
+    }-${date.getFullYear()}${user['phoneNumber']}-${new Date().getTime()}-${
+      user['DOB']
+    }`;
+    const storeRef = storage().ref(`recordings/Rec-VID-480-${audRecName}`);
     await storeRef.putFile(uploadUri);
     await storeRef.getDownloadURL().then(url => {
       firestore()
         .collection('Recordings')
-        .doc(user['uid'])
-        .collection('Rec')
         .add({
           recURL: url,
-          recName: `Rec-VID-${audRecName}`,
+          recName: `Rec-VID-480-${audRecName}`,
           duration: user['timePeriod'],
           format: 'Video',
           createdAt: date,
           longitude: currentLongitude,
           latitude: currentLatitude,
+          uid: user['uid'],
         })
         .then(() => {
           alert('Evidence added!');
@@ -74,15 +71,14 @@ const RecordContextProvider = props => {
 
   const userID = user === undefined ? null : user['uid'];
 
-  console.log('User --> ' + userID);
+  // console.log('User --> ' + userID);
 
   useEffect(async () => {
     user === undefined
       ? null
       : await firestore()
           .collection('Recordings')
-          .doc(userID)
-          .collection('Rec')
+          .where('uid', '==', userID)
           .onSnapshot(docSnap => {
             !docSnap.empty
               ? setEvidenceList(
@@ -95,6 +91,8 @@ const RecordContextProvider = props => {
                       long: evidence.data().longitude,
                       name: evidence.data().recName,
                       url: evidence.data().recURL,
+                      uid: evidence.data().uid,
+                      id: evidence.id,
                     };
                   }),
                 )
@@ -108,5 +106,8 @@ const RecordContextProvider = props => {
     </RecordContext.Provider>
   );
 };
+
+// --> Create Context
+export const RecordContext = createContext();
 
 export default RecordContextProvider;

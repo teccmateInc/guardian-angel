@@ -1,4 +1,4 @@
-import React, {createContext, useState} from 'react';
+import React, {createContext, useEffect, useState} from 'react';
 
 //Firebase Auth
 import auth from '@react-native-firebase/auth';
@@ -8,46 +8,58 @@ import storage from '@react-native-firebase/storage';
 //Auth Context
 export const AuthContext = createContext();
 
+// Async Storage
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+//Notification
+import PushNotification from 'react-native-push-notification';
+
 const AuthContextProvider = props => {
   const [user, setUser] = useState();
+
+  useEffect(async () => {
+    const getUser = await AsyncStorage.getItem('User');
+    return getUser === null ? null : setUser(JSON.parse(getUser));
+  }, [user]);
 
   const signIn = async (email, pass, navigation) => {
     await auth()
       .signInWithEmailAndPassword(email, pass)
       .then(Token => {
         const User = Token.user;
-        // console.log('User account created & signed in! --> ' + User.uid);
         firestore()
           .collection('Users')
-          // .where('email', '==', User.email)
           .doc(User.uid)
           .get()
           .then(doc => {
             const UserData = doc.data();
-            // console.log('Data --> ' + doc.id);
-            UserData.phoneNumber === '' || UserData.timePeriod === ''
-              ? navigation.navigate('SignUpDetails', {
-                  email: UserData.email,
-                  username: UserData.name,
-                  uid: UserData.uid,
-                })
-              : (setUser({
-                  avatar: UserData.avatar,
-                  uid: UserData.uid,
-                  name: UserData.name,
-                  email: UserData.email,
-                  phoneNumber: UserData.phoneNumber,
-                  DOB: UserData.DOB,
-                  gender: UserData.gender,
-                  country: UserData.country,
-                  city: UserData.city,
-                  address: UserData.address,
-                  timePeriod: UserData.timePeriod,
-                }),
-                navigation.navigate('Tab', {
-                  phoneNumber: UserData.phoneNumber,
-                  DOB: UserData.DOB,
-                }));
+            if (UserData.phoneNumber === '' || UserData.timePeriod === '') {
+              navigation.navigate('SignUpDetails', {
+                email: UserData.email,
+                username: UserData.name,
+                uid: UserData.uid,
+              });
+            } else {
+              const data = {
+                avatar: UserData.avatar,
+                uid: UserData.uid,
+                name: UserData.name,
+                email: UserData.email,
+                phoneNumber: UserData.phoneNumber,
+                DOB: UserData.DOB,
+                gender: UserData.gender,
+                country: UserData.country,
+                city: UserData.city,
+                address: UserData.address,
+                timePeriod: UserData.timePeriod,
+              };
+              AsyncStorage.setItem('User', JSON.stringify(data));
+              setUser(data);
+              navigation.navigate('Tab', {
+                phoneNumber: UserData.phoneNumber,
+                DOB: UserData.DOB,
+              });
+            }
           });
       })
       .catch(error => {
@@ -64,6 +76,9 @@ const AuthContextProvider = props => {
       .createUserWithEmailAndPassword(email, pass)
       .then(Token => {
         const User = Token.user;
+        User.updateProfile({
+          displayName: username,
+        });
         // console.log('User account created & signed in! --> ' + User);
         firestore().collection('Users').doc(User.uid).set({
           email: User.email,
@@ -124,7 +139,7 @@ const AuthContextProvider = props => {
       })
       .then(() => {
         alert('Successfully Logged In!');
-        setUser({
+        const data = {
           avatar: '',
           uid: uid,
           timePeriod: timePeriod,
@@ -136,7 +151,9 @@ const AuthContextProvider = props => {
           country: country,
           city: city,
           address: address,
-        });
+        };
+        AsyncStorage.setItem('User', JSON.stringify(data));
+        setUser(data);
         navigation.navigate('Tab');
       });
   };
@@ -168,7 +185,7 @@ const AuthContextProvider = props => {
           address: address,
         })
         .then(() => {
-          setUser({
+          const data = {
             avatar: url,
             name: name,
             country: country,
@@ -180,7 +197,9 @@ const AuthContextProvider = props => {
             DOB: user['DOB'],
             gender: user['gender'],
             uid: user['uid'],
-          });
+          };
+          AsyncStorage.setItem('User', JSON.stringify(data));
+          setUser(data);
         });
     });
     setTimeout(() => {
@@ -203,7 +222,7 @@ const AuthContextProvider = props => {
             address: address,
           })
           .then(() => {
-            setUser({
+            const data = {
               name: name,
               country: country,
               city: city,
@@ -215,18 +234,22 @@ const AuthContextProvider = props => {
               DOB: user['DOB'],
               gender: user['gender'],
               uid: user['uid'],
-            });
+            };
+            AsyncStorage.setItem('User', JSON.stringify(data));
+            setUser(data);
             setTimeout(() => {
               alert('Your Information is up-to Date!');
             }, 3000);
           });
   };
 
-  const handleSignOut = navigation => {
-    auth()
+  const handleSignOut = async navigation => {
+    await auth()
       .signOut()
-      .then(() => alert('Successfully signed out!'));
-    navigation.navigate('Registration');
+      .then(async () => {
+        await AsyncStorage.clear();
+        navigation.replace('Registration');
+      });
   };
 
   return (

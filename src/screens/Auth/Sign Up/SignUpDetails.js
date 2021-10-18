@@ -1,20 +1,27 @@
 import React, {useState, useRef, useContext} from 'react';
-import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
+import {View, Text, ScrollView} from 'react-native';
 
 //Style
 import Style, {Theme} from '../../../../style';
-import {Button, TextInput, List} from 'react-native-paper';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as Animatable from 'react-native-animatable';
-import PhoneInput from 'react-native-phone-number-input';
-import DatePicker from 'react-native-date-picker';
+
+//Component
+//--> Button
+import Btn from '../../../components/Button/Btn';
+//--> Date Picker
+import DatePickerInput from '../../../components/DatePicker/DatePickerInput';
+//--> List
+import ListAccordion from '../../../components/List/ListAccordion';
+//--> TextInput
+import TextInput from '../../../components/Input/TextInputField';
+//--> Phone Input
+import PhoneNo from '../../../components/Input/PhoneNo';
 
 // Context
 import {AuthContext} from '../../Context/AuthContext';
 
 export default function SignUpDetails({route, navigation}) {
   const {email, username, uid} = route.params;
-  // console.log(email + ' - ' + username);
 
   //Context
   const {signUpInfo} = useContext(AuthContext);
@@ -30,9 +37,6 @@ export default function SignUpDetails({route, navigation}) {
   const [country, setCountry] = useState('');
   const [city, setCity] = useState('');
   const [address, setAddress] = useState('');
-
-  //Ref
-  const phoneInput = useRef(null);
 
   const handlePress = () => setExpanded(!expanded);
 
@@ -66,184 +70,163 @@ export default function SignUpDetails({route, navigation}) {
     );
   };
 
+  const btnActivity =
+    address !== '' &&
+    city !== '' &&
+    country !== '' &&
+    formattedValue !== '' &&
+    date !== '' &&
+    gender !== '' &&
+    timePeriod !== ''
+      ? false
+      : true;
+
   // console.log('Date --> ' + DOB);
 
+  const timeList = [
+    {
+      title: '2 mins',
+      handle: () => handleTimePeriod('2'),
+    },
+    {
+      title: '4 mins',
+      handle: () => handleTimePeriod('4'),
+    },
+    {
+      title: '6 mins',
+      handle: () => handleTimePeriod('6'),
+    },
+    {
+      title: '8 mins',
+      handle: () => handleTimePeriod('8'),
+    },
+    {
+      title: '10 mins',
+      handle: () => handleTimePeriod('10'),
+    },
+  ];
+
+  const genderList = [
+    {
+      title: 'Male',
+      handle: () => handleGender('Male'),
+    },
+    {
+      title: 'Female',
+      handle: () => handleGender('Female'),
+    },
+    {
+      title: 'Other',
+      handle: () => handleGender('Other'),
+    },
+  ];
+
   return (
-    <View>
+    <View
+      style={{
+        backgroundColor: '#fff',
+      }}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View
           style={{
             backgroundColor: Theme.colors.accent,
-            elevation: 5,
+            elevation: 4,
             paddingVertical: 10,
+            borderBottomEndRadius: 50,
           }}>
-          <Text style={Style.H1}>Welcome to My Guardian Angel!</Text>
-          <Text style={Style.H4}>
+          <Text style={[Style.H1, Style.TextShadow]}>
+            Welcome to My Guardian Angel!
+          </Text>
+          <Text style={[Style.H4, Style.TextShadow]}>
             You are only two step away from your profile
           </Text>
         </View>
 
-        <View
-          style={{
-            backgroundColor: '#fff',
-            paddingVertical: 15,
-          }}>
+        <View style={Style.paper}>
           <Text style={Style.H3}>Evidence Time Period:</Text>
           <Animatable.View animation="fadeInUp" duration={800} delay={800}>
             <Text style={Style.H5}>
-              How Much Long you want to Record Evidence:
+              Please select your lenght of time for Evidence gathering:
             </Text>
-            <List.Accordion
-              theme={Theme}
-              style={{backgroundColor: '#fff'}}
+            <ListAccordion
               title={timePeriod + ' mins'}
-              left={props => <List.Icon {...props} icon="clock-outline" />}
+              leftIcon="clock-outline"
               expanded={expandedTime}
-              onPress={handlePressTime}>
-              <List.Item title="2 mins" onPress={() => handleTimePeriod('2')} />
-              <List.Item title="4 mins" onPress={() => handleTimePeriod('4')} />
-              <List.Item title="6 mins" onPress={() => handleTimePeriod('6')} />
-              <List.Item title="8 mins" onPress={() => handleTimePeriod('8')} />
-            </List.Accordion>
+              handlePress={handlePressTime}
+              ListItem={timeList}
+            />
           </Animatable.View>
+        </View>
+
+        <View style={Style.paper}>
           <Text style={Style.H3}>Personal Information:</Text>
           <Animatable.View animation="fadeInUp" duration={800} delay={1000}>
             <Text style={Style.H5}>Phone Number:</Text>
-            <PhoneInput
-              ref={phoneInput}
-              defaultValue={phoneNo}
-              defaultCode="PK"
-              layout="first"
-              onChangeText={text => {
-                setPhoneNo(text);
-              }}
-              onChangeFormattedText={text => {
-                setFormattedValue(text);
-              }}
-              containerStyle={Style.PhoneInput}
+            <PhoneNo
+              value={phoneNo}
+              onTextChange={text => setPhoneNo(text)}
+              onFormatChange={text => setFormattedValue(text)}
             />
           </Animatable.View>
+
           <Animatable.View animation="fadeInUp" duration={800} delay={1200}>
             <View style={{marginVertical: 5}}>
               <Text style={Style.H5}>Date of Birth:</Text>
-              <DatePicker
-                style={{justifyContent: 'center', alignSelf: 'center'}}
-                mode="date"
-                date={date}
-                onDateChange={data => setDate(data)}
-              />
+              <DatePickerInput value={date} onChange={data => setDate(data)} />
             </View>
           </Animatable.View>
+
           <Animatable.View animation="fadeInUp" duration={800} delay={1400}>
             <Text style={Style.H5}>Gender:</Text>
-            <List.Accordion
-              theme={Theme}
-              style={{backgroundColor: '#fff'}}
+            <ListAccordion
               title={gender}
-              left={props => <List.Icon {...props} icon="account" />}
+              leftIcon="account"
               expanded={expanded}
-              onPress={handlePress}>
-              <List.Item title="Male" onPress={() => handleGender('Male')} />
-              <List.Item
-                title="Female"
-                onPress={() => handleGender('Female')}
-              />
-              <List.Item title="Other" onPress={() => handleGender('Other')} />
-            </List.Accordion>
+              handlePress={handlePress}
+              ListItem={genderList}
+            />
           </Animatable.View>
+        </View>
+
+        <View style={Style.paper}>
           <Text style={Style.H3}>Address:</Text>
           <Animatable.View animation="fadeInUp" duration={800} delay={1600}>
             <Text style={Style.H5}>Country:</Text>
             <TextInput
-              left={
-                <TextInput.Icon
-                  name={() => (
-                    <Icon
-                      name="map-marker"
-                      size={20}
-                      color={Theme.colors.primary}
-                    />
-                  )}
-                />
-              }
-              style={{
-                marginHorizontal: 25,
-                marginVertical: 5,
-              }}
-              mode="outlined"
-              theme={Theme}
+              leftIcon="map-marker"
               label="Country"
               value={country}
               onChangeText={text => setCountry(text)}
             />
           </Animatable.View>
+
           <Animatable.View animation="fadeInUp" duration={800} delay={1800}>
             <Text style={Style.H5}>City:</Text>
             <TextInput
-              left={
-                <TextInput.Icon
-                  name={() => (
-                    <Icon
-                      name="city-variant-outline"
-                      size={20}
-                      color={Theme.colors.primary}
-                    />
-                  )}
-                />
-              }
-              style={{
-                marginHorizontal: 25,
-                marginVertical: 5,
-              }}
-              mode="outlined"
-              theme={Theme}
+              leftIcon="city-variant-outline"
               label="City"
               value={city}
               onChangeText={text => setCity(text)}
             />
           </Animatable.View>
+
           <Animatable.View animation="fadeInUp" duration={800} delay={2000}>
             <Text style={Style.H5}>Complete Street Address:</Text>
             <TextInput
-              left={
-                <TextInput.Icon
-                  name={() => (
-                    <Icon name="home" size={20} color={Theme.colors.primary} />
-                  )}
-                />
-              }
-              style={{
-                marginHorizontal: 25,
-                marginVertical: 5,
-              }}
-              mode="outlined"
-              theme={Theme}
+              leftIcon="home"
               label="Address"
               value={address}
               onChangeText={text => setAddress(text)}
             />
           </Animatable.View>
-
-          <Button
-            style={{width: 300, margin: 10, alignSelf: 'center'}}
-            color={Theme.colors.primary}
-            icon="login"
-            mode="contained"
-            disabled={
-              address !== '' &&
-              city !== '' &&
-              country !== '' &&
-              formattedValue !== '' &&
-              date !== '' &&
-              gender !== '' &&
-              timePeriod !== ''
-                ? false
-                : true
-            }
-            onPress={() => handleProceed('Sign Up')}>
-            Proceed
-          </Button>
         </View>
+
+        <Btn
+          icon="login"
+          disabled={btnActivity}
+          onPress={() => handleProceed()}
+          label="Proceed"
+        />
       </ScrollView>
     </View>
   );

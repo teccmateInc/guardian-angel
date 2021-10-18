@@ -20,7 +20,7 @@ export default function GuardiansEdit({route, navigation}) {
   const [valid, setValid] = useState(false);
 
   //Context Calling
-  const {addAngel} = useContext(GuardianContext);
+  const {addAngel, reqAngel} = useContext(GuardianContext);
 
   const validateEmail = text => {
     let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -112,7 +112,7 @@ export default function GuardiansEdit({route, navigation}) {
                 : null
             }
             mode="contained"
-            onPress={() => addAngel(name, email, relation)}>
+            onPress={() => reqAngel(name, email, relation)}>
             {type === 'add' ? 'Add ' : type === 'edit' ? 'Edit ' : null}Guardian
             Angel
           </Button>

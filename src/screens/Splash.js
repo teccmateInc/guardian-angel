@@ -8,12 +8,18 @@ import {Theme} from '../../style';
 import * as Animatable from 'react-native-animatable';
 
 //Asset
-// import logo from '../../assets/logo.png';
+import logo from '../assets/logo.png';
+
+// Async Storage
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Splash({navigation}) {
-  useEffect(() => {
+  useEffect(async () => {
+    const getUser = await AsyncStorage.getItem('User');
     setTimeout(() => {
-      navigation.replace('Registration');
+      getUser === null || getUser === {}
+        ? navigation.replace('Registration')
+        : navigation.replace('Tab');
     }, 2200);
   });
   return (
@@ -23,7 +29,7 @@ export default function Splash({navigation}) {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#fff',
+        backgroundColor: Theme.colors.accent + '75',
         width: '100%',
         height: '100%',
       }}>
@@ -58,18 +64,18 @@ export default function Splash({navigation}) {
           position: 'absolute',
         }}></Animatable.View>
       <Animatable.View animation="zoomIn" duration={800} delay={1000}>
-        {/* <Image
+        <Image
           source={logo}
           style={{width: 250, height: 250, resizeMode: 'contain'}}
-        /> */}
-        <Text
+        />
+        {/* <Text
           style={{
             fontFamily: 'Poppins-Bold',
             fontSize: 24,
             color: Theme.colors.placeholder,
           }}>
           My Guardian Angels
-        </Text>
+        </Text> */}
       </Animatable.View>
     </View>
   );

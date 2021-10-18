@@ -44,7 +44,9 @@ export default function EditProfile({navigation}) {
     UpdateUser(userAvatar, name, country, city, address, updateInfo);
     setTimeout(() => {
       setActivity(false);
-      resetInputs();
+      // resetInputs();
+    }, 3200);
+    setTimeout(() => {
       navigation.navigate('Profile');
     }, 3000);
   };
@@ -77,11 +79,11 @@ export default function EditProfile({navigation}) {
   };
 
   // Reset Inputs
-  const resetInputs = () => {
-    setName('');
-    setCity('');
-    setAddress('');
-  };
+  // const resetInputs = () => {
+  //   setName('');
+  //   setCity('');
+  //   setAddress('');
+  // };
 
   return (
     <View style={{flex: 1}}>
@@ -168,6 +170,7 @@ export default function EditProfile({navigation}) {
               </Text>
               <Button
                 mode="contained"
+                disabled={activity}
                 color={Theme.colors.primary}
                 onPress={UpdateProfile}>
                 Update Information

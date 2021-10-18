@@ -116,46 +116,46 @@ export function ProfileHeader(props) {
           />
           <View style={{flex: 1}}>
             {name ? (
-              <View
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <Text
-                  style={{
-                    fontSize: 20,
-                    fontFamily: 'Montserrat-Bold',
-                    flex: 1,
-                    color: '#fff',
-                  }}>
-                  {name}
-                </Text>
-                <IconButton
-                  icon="pencil"
-                  color="#280056"
-                  size={20}
-                  style={{
-                    marginVertical: 0,
-                    marginHorizontal: 20,
-                    borderWidth: 2,
-                    borderColor: '#280056',
-                  }}
-                  onPress={() => navigation.navigate('EditProfile')}
-                />
-              </View>
-            ) : null}
-            {email ? (
               <Text
                 style={{
-                  fontSize: 14,
-                  fontFamily: 'Montserrat-Medium',
+                  fontSize: 20,
+                  fontFamily: 'Montserrat-Bold',
                   color: '#fff',
                 }}>
-                {email}
+                {name}
               </Text>
             ) : null}
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              {email ? (
+                <Text
+                  style={{
+                    flex: 1,
+                    fontSize: 14,
+                    fontFamily: 'Montserrat-Medium',
+                    color: '#fff',
+                  }}>
+                  {email}
+                </Text>
+              ) : null}
+              <IconButton
+                icon="pencil"
+                color="#280056"
+                size={20}
+                style={{
+                  marginVertical: 0,
+                  marginHorizontal: 20,
+                  borderWidth: 2,
+                  borderColor: '#280056',
+                }}
+                onPress={() => navigation.navigate('EditProfile')}
+              />
+            </View>
           </View>
         </Animatable.View>
       </LinearGradient>

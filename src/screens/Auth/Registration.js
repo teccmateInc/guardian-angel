@@ -2,10 +2,9 @@ import React, {useState} from 'react';
 import {ScrollView, View, Text, Image} from 'react-native';
 
 //Style
-import {Theme, width, height} from '../../../style';
+import Style, {Theme} from '../../../style';
 
 //Library
-import {Button} from 'react-native-paper';
 import * as Animatable from 'react-native-animatable';
 
 //Screens
@@ -23,12 +22,7 @@ export default function Registration({navigation}) {
   // console.log(height / 2.6);
   return (
     <View style={{backgroundColor: Theme.colors.accent, flex: 1}}>
-      <View
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
+      <View style={Style.flexContainer}>
         <Image source={Banner01} style={{width: 340, height: 250}} />
       </View>
 
@@ -38,7 +32,6 @@ export default function Registration({navigation}) {
         delay={1000}
         style={{
           flex: 1,
-          paddingVertical: 20,
           backgroundColor: '#fff',
           borderTopLeftRadius: 30,
           borderTopRightRadius: 30,

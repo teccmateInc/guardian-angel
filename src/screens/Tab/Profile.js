@@ -81,7 +81,11 @@ export default function Profile({navigation}) {
         </View>
         <View>
           <Button
-            style={{width: 300, margin: 10, alignSelf: 'center'}}
+            style={{
+              width: 300,
+              margin: 10,
+              alignSelf: 'center',
+            }}
             color="#bf211e"
             // icon="microphone"
             mode="contained"
