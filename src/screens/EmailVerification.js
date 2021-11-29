@@ -28,7 +28,8 @@ export default function EmailVerification({navigation}) {
   const checkVerification = async () => {
     const getUser = await AsyncStorage.getItem('User');
     const verification = await AsyncStorage.getItem('EmailVerified');
-    if (getUser !== null && getUser !== {} && verification) {
+    const emailCheck = JSON.parse(verification);
+    if (getUser !== null && getUser !== {} && emailCheck) {
       navigation.replace('Tab');
     }
   };
@@ -44,6 +45,7 @@ export default function EmailVerification({navigation}) {
     }, 1000);
 
     setTimeout(() => {
+      clearInterval();
       setStatus(false);
       setCount(60);
     }, 60000);

@@ -2,7 +2,7 @@ import React, {useState, useContext} from 'react';
 import {View, ScrollView, Text} from 'react-native';
 
 //Style
-import {Theme} from '../../../../style';
+import Style, {Theme} from '../../../../style';
 
 //--> Input
 import {
@@ -16,6 +16,10 @@ import {
 //Components
 //--> Header
 import Header from '../../../components/Header/Header';
+//--> List
+import ListAccordion from '../../../components/List/ListAccordion';
+//--> List
+import Loader from '../../../components/Loader/Loader';
 //--> Image Picker
 import {launchImageLibrary} from 'react-native-image-picker';
 
@@ -35,20 +39,26 @@ export default function EditProfile({navigation}) {
   const [city, setCity] = useState(user[`city`]);
   const [address, setAddress] = useState(user[`address`]);
   const [userAvatar, setUserAvatar] = useState(user['avatar']);
+  const [timePeriod, setTimePeriod] = useState(user['timePeriod']);
+  const [expandedTime, setExpandedTime] = useState(false);
   const [updateInfo, setUpdateInfo] = useState(false);
   const [activity, setActivity] = useState(false);
 
   // Update Prodile Data
   const UpdateProfile = () => {
     setActivity(true);
-    UpdateUser(userAvatar, name, country, city, address, updateInfo);
-    setTimeout(() => {
-      setActivity(false);
-      // resetInputs();
-    }, 3200);
-    setTimeout(() => {
-      navigation.navigate('Profile');
-    }, 3000);
+    UpdateUser(
+      userAvatar,
+      name,
+      country,
+      city,
+      address,
+      timePeriod,
+      setActivity,
+      updateInfo,
+      navigation,
+    );
+    setTimeout(() => {}, 3000);
   };
 
   // Image Picker -->
@@ -76,6 +86,35 @@ export default function EditProfile({navigation}) {
         });
       }
     });
+  };
+
+  const timeList = [
+    {
+      title: '2 mins',
+      handle: () => handleTimePeriod('2'),
+    },
+    {
+      title: '4 mins',
+      handle: () => handleTimePeriod('4'),
+    },
+    {
+      title: '6 mins',
+      handle: () => handleTimePeriod('6'),
+    },
+    {
+      title: '8 mins',
+      handle: () => handleTimePeriod('8'),
+    },
+    {
+      title: '10 mins',
+      handle: () => handleTimePeriod('10'),
+    },
+  ];
+
+  const handlePressTime = () => setExpandedTime(!expandedTime);
+  const handleTimePeriod = x => {
+    setTimePeriod(x);
+    setExpandedTime(!expandedTime);
   };
 
   // Reset Inputs
@@ -147,17 +186,19 @@ export default function EditProfile({navigation}) {
               onChangeText={text => setAddress(text)}
               value={address}
             />
-            {/* <TextInput
-        mode="outlined"
-        theme={Theme}
-        label="Contact no"
-        style={{marginVertical: 10}}
-        disabled={true}
-        value={user[`phoneNo`]}
-      /> */}
-            {activity ? (
-              <ActivityIndicator animating={activity} theme={Theme} />
-            ) : null}
+            <View style={Style.paper}>
+              <Text style={Style.H3}>Evidence Time Period:</Text>
+              <Text style={Style.H5}>
+                Please select your lenght of time for Evidence gathering:
+              </Text>
+              <ListAccordion
+                title={timePeriod + ' mins'}
+                leftIcon="clock-outline"
+                expanded={expandedTime}
+                handlePress={handlePressTime}
+                ListItem={timeList}
+              />
+            </View>
             <View style={{marginVertical: 20}}>
               <Text
                 style={{
@@ -179,6 +220,7 @@ export default function EditProfile({navigation}) {
           </View>
         </ScrollView>
       </View>
+      {activity ? <Loader /> : null}
     </View>
   );
 }

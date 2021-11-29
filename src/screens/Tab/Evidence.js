@@ -8,15 +8,17 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 //Components
 import Header from '../../components/Header/Header';
+import Btn from '../../components/Button/Btn';
 import List from '../../components/List/List';
 import ModalPlayer from '../../components/Modal/ModalPlayer';
+import Loader from '../../components/Loader/Loader';
 
 //Assets
-import {EvidenceList, FilterBtnEvi} from '../../assets/DemoData';
+import {FilterBtnEvi} from '../../assets/DemoData';
 
+//Context
 import {RecordContext} from '../Context/RecordContext';
-
-import firestore from '@react-native-firebase/firestore';
+import {LanguageContext} from '../Context/LanguageContext';
 
 export default function Evidence() {
   const [search, setSearch] = useState('');
@@ -27,6 +29,9 @@ export default function Evidence() {
   const [lat, setLat] = useState();
   const [long, setLong] = useState();
   const [elevation, setElevation] = useState(5);
+  const [loader, setLoader] = useState(false);
+
+  const [status, setStatus] = useState(true);
 
   const showModal = (x, y, z) => {
     setLink(x), setLat(y), setLong(z), setVisible(true), setElevation(0);
@@ -34,9 +39,14 @@ export default function Evidence() {
   const hideModal = () => setVisible(false);
 
   //Context
-  const {evidenceList} = useContext(RecordContext);
+  const {evidenceList, groupEvidence, removeRecord} = useContext(RecordContext);
+  const {Lang} = useContext(LanguageContext);
 
-  let filterEvidence = evidenceList.filter(item => {
+  const Evidences = status
+    ? groupEvidence.sort((x, y) => x.createdAt <= y.createdAt)
+    : evidenceList.sort((x, y) => x.createdAt <= y.createdAt);
+
+  let filterEvidence = Evidences.filter(item => {
     return (
       (item.name.toLowerCase().includes(search.toLowerCase()) !== false &&
         item.format.toLowerCase().includes(filter.toLowerCase()) !== false) ||
@@ -46,7 +56,30 @@ export default function Evidence() {
 
   return (
     <View style={{flex: 1}}>
-      <Header title="Evidence" subtitle="Your Recorded evidence & proof." />
+      <Header title={Lang[23]} subtitle="Your Recorded evidence & proof." />
+
+      <View
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          marginVertical: 20,
+        }}>
+        <Btn
+          label="Angels Evidence"
+          disabled={status}
+          style={{width: 200, margin: 5, elevation: 0}}
+          onPress={() => setStatus(true)}
+        />
+        <Btn
+          label="My Evidence"
+          disabled={!status}
+          style={{width: 150, margin: 5, elevation: 0}}
+          onPress={() => setStatus(false)}
+        />
+      </View>
 
       <Searchbar
         style={{marginHorizontal: 20, marginVertical: 10, elevation: elevation}}
@@ -105,21 +138,22 @@ export default function Evidence() {
                 Data={data}
                 key={index}
                 index={index}
-                showModal={showModal}
+                loader={setLoader}
+                handleSubmit={showModal}
+                handleRemove={!status ? removeRecord : null}
               />
             );
           })}
         </View>
         <View style={styles.container}>
           {filterEvidence.length > viewMore ? (
-            <Button
+            <Btn
+              label="View More"
               mode="text"
               icon="view-grid-plus-outline"
-              color={Theme.colors.primary}
               style={{width: 150, marginVertical: 10}}
-              onPress={() => setViewMore(viewMore + 4)}>
-              View More
-            </Button>
+              onPress={() => setViewMore(viewMore + 4)}
+            />
           ) : filterEvidence.length <= viewMore ? (
             <Text
               style={{
@@ -144,6 +178,7 @@ export default function Evidence() {
         visible={visible}
         hideModal={hideModal}
       />
+      {loader ? <Loader /> : null}
     </View>
   );
 }

@@ -11,6 +11,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 
 //Screens
 import Splash from './src/screens/Splash';
+import EmailVerification from './src/screens/EmailVerification';
 import Registration from './src/screens/Auth/Registration';
 import SignUpDetails from './src/screens/Auth/Sign Up/SignUpDetails';
 // Edit Profile
@@ -33,6 +34,11 @@ export default function App() {
           <Stack.Screen
             name="Splash"
             component={Splash}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="EmailVerification"
+            component={EmailVerification}
             options={{headerShown: false}}
           />
           <Stack.Screen

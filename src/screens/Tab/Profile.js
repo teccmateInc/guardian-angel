@@ -3,7 +3,6 @@ import {View, Text, ScrollView} from 'react-native';
 
 // Style
 import Style, {Theme} from '../../../style';
-import {Button} from 'react-native-paper';
 
 // Components
 // --> Header
@@ -16,18 +15,19 @@ import Maps from '../../components/Maps/Maps';
 //Context
 import {AuthContext} from '../Context/AuthContext';
 import {LocationContext} from '../Context/LocationContext';
+import {LanguageContext} from '../Context/LanguageContext';
 
 export default function Profile({navigation}) {
   //Context
-  const {user, handleSignOut} = useContext(AuthContext);
+  const {user} = useContext(AuthContext);
+  const {Lang} = useContext(LanguageContext);
   const {currentLongitude, currentLatitude} = useContext(LocationContext);
-
-  console.log('User Id --> ' + user['uid']);
 
   return (
     <View style={{backgroundColor: Theme.colors.accent + 80, flex: 1}}>
       <ProfileHeader
-        title="My Profile"
+        title={Lang[15]}
+        btnLabel={Lang[16]}
         name={user['name']}
         email={user['email']}
         avatar={user['avatar']}
@@ -35,41 +35,37 @@ export default function Profile({navigation}) {
       />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{marginVertical: 20}}>
-          <Text style={Style.H3}>Evidence Time Period:</Text>
+          <Text style={Style.H3}>Now Connected:</Text>
           <ListItem
-            title="Default Recording Time:"
+            title="Hurray! Verified"
+            icon="alert"
+            data="You are now connected with our My Guardian Angel Application v1.0.16"
+          />
+        </View>
+        <View style={{marginVertical: 20}}>
+          <Text style={Style.H3}>{Lang[4]}:</Text>
+          <ListItem
+            title={Lang[7]}
             icon="clock"
             data={user['timePeriod'] + ' mins'}
           />
         </View>
         <View style={{marginVertical: 20}}>
-          <Text style={Style.H3}>Personal Information:</Text>
-          <ListItem
-            title="Phone Number:"
-            icon="phone"
-            data={user['phoneNumber']}
-          />
-          <ListItem title="Gender:" icon="account" data={user['gender']} />
-          <ListItem
-            title="Date of Birth:"
-            icon="calendar-today"
-            data={user['DOB']}
-          />
+          <Text style={Style.H3}>{Lang[5]}:</Text>
+          <ListItem title={Lang[8]} icon="phone" data={user['phoneNumber']} />
+          <ListItem title={Lang[9]} icon="account" data={user['gender']} />
+          <ListItem title={Lang[10]} icon="calendar-today" data={user['DOB']} />
         </View>
 
         <View style={{marginVertical: 20}}>
-          <Text style={Style.H3}>Address:</Text>
-          <ListItem title="Country:" icon="map-marker" data={user['country']} />
+          <Text style={Style.H3}>{Lang[6]}:</Text>
+          <ListItem title={Lang[11]} icon="map-marker" data={user['country']} />
           <ListItem
-            title="City:"
+            title={Lang[12]}
             icon="city-variant-outline"
             data={user['city']}
           />
-          <ListItem
-            title="Complete Street Address:"
-            icon="home"
-            data={user['address']}
-          />
+          <ListItem title={Lang[13]} icon="home" data={user['address']} />
         </View>
 
         {/* <Maps /> */}
@@ -79,7 +75,7 @@ export default function Profile({navigation}) {
             currentLatitude={currentLatitude}
           />
         </View>
-        <View>
+        {/* <View>
           <Button
             style={{
               width: 300,
@@ -92,7 +88,7 @@ export default function Profile({navigation}) {
             onPress={() => handleSignOut(navigation)}>
             Sign Out
           </Button>
-        </View>
+        </View> */}
       </ScrollView>
     </View>
   );

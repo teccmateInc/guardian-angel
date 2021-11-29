@@ -14,11 +14,27 @@
       },
       "oauth_client": [
         {
-          "client_id": "279405197006-phj11hlsea3gpkad228fis0k5vjg677q.apps.googleusercontent.com",
+          "client_id": "279405197006-g2rrimman4oc320ngpg0g5egj5to8edl.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.daniyalmalikc.myguardianangel",
-            "certificate_hash": "509f8be262efe825fda275e02b2628be0e45fb22"
+            "certificate_hash": "5c7354805e195b372c234999f3fb998e50e7410a"
+          }
+        },
+        {
+          "client_id": "279405197006-g8asv9lhu7384t4eohgif0h85f8ao65m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.daniyalmalikc.myguardianangel",
+            "certificate_hash": "304a8c55b06b99eb04f943190c02ca584f2f47d7"
+          }
+        },
+        {
+          "client_id": "279405197006-sp9lhlfip4hu91ogsdof9s34s6dn0ib4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.daniyalmalikc.myguardianangel",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
           }
         },
         {

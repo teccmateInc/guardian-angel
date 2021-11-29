@@ -14,14 +14,26 @@ import logo from '../assets/logo.png';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Splash({navigation}) {
-  useEffect(async () => {
-    const getUser = await AsyncStorage.getItem('User');
-    setTimeout(() => {
-      getUser === null || getUser === {}
-        ? navigation.replace('Registration')
-        : navigation.replace('Tab');
-    }, 2200);
+  useEffect(() => {
+    registerSplash();
   });
+
+  const registerSplash = async () => {
+    const getUser = await AsyncStorage.getItem('User');
+    const verification = await AsyncStorage.getItem('EmailVerified');
+    const emailCheck = !JSON.parse(verification);
+
+    setTimeout(() => {
+      if (getUser === null || getUser === {}) {
+        navigation.replace('Registration');
+      } else if (getUser !== null && getUser !== {} && emailCheck) {
+        navigation.replace('EmailVerification');
+      } else {
+        navigation.replace('Tab');
+      }
+    }, 2200);
+  };
+
   return (
     <View
       style={{

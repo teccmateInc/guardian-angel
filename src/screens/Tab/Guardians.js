@@ -8,6 +8,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 //Screens
 import GuardiansEdit from './Guardians/GuardiansEdit';
 import GuardiansList from './Guardians/GuardiansList';
+import GuardiansReq from './Guardians/GuardiansReq';
 
 //Context
 import GuardianContextProvider from '../Context/GuardianContext';
@@ -31,6 +32,11 @@ export default function Guardians() {
         <Stack.Screen
           name="GuardiansEdit"
           component={GuardiansEdit}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="GuardiansReq"
+          component={GuardiansReq}
           options={{headerShown: false}}
         />
       </Stack.Navigator>

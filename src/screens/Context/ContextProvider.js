@@ -1,5 +1,6 @@
 import React from 'react';
 
+import LanguageContextProvider from './LanguageContext';
 import AuthContextProvider from './AuthContext';
 import LocationContextProvider from './LocationContext';
 import RecordContextProvider from './RecordContext';
@@ -7,13 +8,15 @@ import GuardianContextProvider from './GuardianContext';
 
 const ContextProvider = props => {
   return (
-    <AuthContextProvider>
-      <LocationContextProvider>
-        <RecordContextProvider>
-          <GuardianContextProvider>{props.children}</GuardianContextProvider>
-        </RecordContextProvider>
-      </LocationContextProvider>
-    </AuthContextProvider>
+    <LanguageContextProvider>
+      <AuthContextProvider>
+        <LocationContextProvider>
+          <RecordContextProvider>
+            <GuardianContextProvider>{props.children}</GuardianContextProvider>
+          </RecordContextProvider>
+        </LocationContextProvider>
+      </AuthContextProvider>
+    </LanguageContextProvider>
   );
 };
 

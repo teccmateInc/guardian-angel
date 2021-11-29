@@ -5,8 +5,8 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 
-//Auth Context
-export const AuthContext = createContext();
+import {LoginManager, AccessToken} from 'react-native-fbsdk-next';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
 // Async Storage
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -14,68 +14,202 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 //Notification
 import PushNotification from 'react-native-push-notification';
 
+GoogleSignin.configure({
+  webClientId:
+    '279405197006-0jf94nna1b5lqab37il6inckp5tqt9ku.apps.googleusercontent.com',
+});
+
 const AuthContextProvider = props => {
   const [user, setUser] = useState();
+  const date = new Date();
 
-  useEffect(async () => {
-    const getUser = await AsyncStorage.getItem('User');
-    return getUser === null ? null : setUser(JSON.parse(getUser));
+  useEffect(() => {
+    userRegistry();
   }, [user]);
+
+  const userRegistry = async () => {
+    const getUser = await AsyncStorage.getItem('User');
+    if (getUser !== null) {
+      const verification = auth().currentUser.emailVerified;
+      // console.log('Ver--> ', verification);
+
+      return () => {
+        setUser(JSON.parse(getUser));
+        AsyncStorage.setItem('EmailVerified', JSON.stringify(verification));
+      };
+    }
+  };
+
+  async function handleGoogle() {
+    // Get the users ID token
+    const {idToken} = await GoogleSignin.signIn();
+
+    // Create a Google credential with the token
+    const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+    // Sign-in the user with the credential
+    return auth()
+      .signInWithCredential(googleCredential)
+      .then(() => {
+        const user = auth().currentUser;
+
+        firestore()
+          .collection('Users')
+          .doc(user.uid)
+          .get()
+          .then(doc => {
+            if (doc.exists) {
+              const UserData = doc.data();
+              setProfile(UserData, navigation);
+            } else {
+              firestore().collection('Users').doc(user.uid).set({
+                email: user.email,
+                name: user.displayName,
+                uid: user.uid,
+                avatar: user.photoURL,
+                timePeriod: '',
+                phoneNumber: '',
+                DOB: '',
+                gender: '',
+                country: '',
+                city: '',
+                address: '',
+              });
+
+              navigation.navigate('SignUpDetails', {
+                email: user.email,
+                username: user.displayName,
+                uid: user.uid,
+              });
+            }
+          });
+      });
+  }
+
+  const handleFacebook = async navigation => {
+    try {
+      const result = await LoginManager.logInWithPermissions([
+        'public_profile',
+        'email',
+      ]);
+      if (result.isCancelled) {
+        throw 'User cancelled the login process';
+      }
+      const data = await AccessToken.getCurrentAccessToken();
+      if (!data) {
+        throw 'Something went wrong obtaining access token';
+      }
+      const facebookCredential = auth.FacebookAuthProvider.credential(
+        data.accessToken,
+      );
+      return auth()
+        .signInWithCredential(facebookCredential)
+        .then(() => {
+          const user = auth().currentUser;
+
+          firestore()
+            .collection('Users')
+            .doc(user.uid)
+            .get()
+            .then(doc => {
+              if (doc.exists) {
+                const UserData = doc.data();
+                setProfile(UserData, navigation);
+              } else {
+                firestore().collection('Users').doc(user.uid).set({
+                  email: user.email,
+                  name: user.displayName,
+                  uid: user.uid,
+                  avatar: user.photoURL,
+                  timePeriod: '',
+                  phoneNumber: '',
+                  DOB: '',
+                  gender: '',
+                  country: '',
+                  city: '',
+                  address: '',
+                });
+
+                navigation.navigate('SignUpDetails', {
+                  email: user.email,
+                  username: user.displayName,
+                  uid: user.uid,
+                });
+              }
+            });
+        });
+    } catch (error) {
+      alert(error);
+    }
+  };
 
   const signIn = async (email, pass, navigation) => {
     await auth()
       .signInWithEmailAndPassword(email, pass)
       .then(Token => {
         const User = Token.user;
+
+        const verification = User.emailVerified;
+        AsyncStorage.setItem('EmailVerified', JSON.stringify(verification));
+
         firestore()
           .collection('Users')
           .doc(User.uid)
           .get()
           .then(doc => {
             const UserData = doc.data();
-            if (UserData.phoneNumber === '' || UserData.timePeriod === '') {
-              navigation.navigate('SignUpDetails', {
-                email: UserData.email,
-                username: UserData.name,
-                uid: UserData.uid,
-              });
-            } else {
-              const data = {
-                avatar: UserData.avatar,
-                uid: UserData.uid,
-                name: UserData.name,
-                email: UserData.email,
-                phoneNumber: UserData.phoneNumber,
-                DOB: UserData.DOB,
-                gender: UserData.gender,
-                country: UserData.country,
-                city: UserData.city,
-                address: UserData.address,
-                timePeriod: UserData.timePeriod,
-              };
-              AsyncStorage.setItem('User', JSON.stringify(data));
-              setUser(data);
-              navigation.navigate('Tab', {
-                phoneNumber: UserData.phoneNumber,
-                DOB: UserData.DOB,
-              });
-            }
+            setProfile(UserData, navigation);
           });
       })
       .catch(error => {
         error.code === 'auth/invalid-email'
-          ? alert('That email address is invalid or doesnot exist!')
+          ? alert('This email address is invalid or does not exist!')
           : error.code === 'auth/wrong-password'
-          ? alert('Your credentials is invalid!')
+          ? alert('Your credentials are invalid!')
           : console.error(error);
       });
   };
+
+  const setProfile = (UserData, navigation) => {
+    if (UserData.phoneNumber === '' || UserData.timePeriod === '') {
+      navigation.navigate('SignUpDetails', {
+        email: UserData.email,
+        username: UserData.name,
+        uid: UserData.uid,
+      });
+    } else {
+      const data = {
+        avatar: UserData.avatar,
+        uid: UserData.uid,
+        name: UserData.name,
+        email: UserData.email,
+        phoneNumber: UserData.phoneNumber,
+        DOB: UserData.DOB,
+        gender: UserData.gender,
+        country: UserData.country,
+        city: UserData.city,
+        address: UserData.address,
+        timePeriod: UserData.timePeriod,
+      };
+      AsyncStorage.setItem('User', JSON.stringify(data));
+      setUser(data);
+      navigation.navigate('Splash');
+    }
+  };
+
+  const Expiry = `${
+    7 + date.getDate()
+  }-${date.getMonth()}-${date.getFullYear()}`;
 
   const signUp = async (email, pass, username, navigation) => {
     await auth()
       .createUserWithEmailAndPassword(email, pass)
       .then(Token => {
         const User = Token.user;
+
+        const verification = User.emailVerified;
+        AsyncStorage.setItem('EmailVerified', JSON.stringify(verification));
+
         User.updateProfile({
           displayName: username,
         });
@@ -92,6 +226,8 @@ const AuthContextProvider = props => {
           country: '',
           city: '',
           address: '',
+          type: 'trial',
+          expiry: Expiry,
         });
         navigation.navigate('SignUpDetails', {
           email: User.email,
@@ -154,7 +290,7 @@ const AuthContextProvider = props => {
         };
         AsyncStorage.setItem('User', JSON.stringify(data));
         setUser(data);
-        navigation.navigate('Tab');
+        navigation.navigate('Splash');
       });
   };
 
@@ -166,7 +302,16 @@ const AuthContextProvider = props => {
       });
   };
 
-  const updateUserAvatar = async (avatar, name, country, city, address) => {
+  const updateUserAvatar = async (
+    avatar,
+    name,
+    country,
+    city,
+    address,
+    timePeriod,
+    activity,
+    navigation,
+  ) => {
     const imageName = `profile${user['uid']}`;
     const uploadUri =
       Platform.OS === 'ios' ? avatar.replace('file://', '') : avatar;
@@ -181,8 +326,10 @@ const AuthContextProvider = props => {
         .update({
           avatar: url,
           name: name,
+          country: country,
           city: city,
           address: address,
+          timePeriod: timePeriod,
         })
         .then(() => {
           const data = {
@@ -191,27 +338,48 @@ const AuthContextProvider = props => {
             country: country,
             city: city,
             address: address,
+            timePeriod: timePeriod,
             email: user['email'],
             phoneNumber: user['phoneNumber'],
-            timePeriod: user['timePeriod'],
             DOB: user['DOB'],
             gender: user['gender'],
             uid: user['uid'],
           };
           AsyncStorage.setItem('User', JSON.stringify(data));
           setUser(data);
+          activity(false);
+          navigation.navigate('Profile');
+          setTimeout(() => {
+            alert('Your Information is up-to Date!');
+          }, 3000);
         });
     });
-    setTimeout(() => {
-      alert('Your Information is up-to Date!');
-    }, 3000);
   };
 
   // Updata data to Firebase and locally
-  const UpdateUser = async (avatar, name, country, city, address, Bool) => {
+  const UpdateUser = async (
+    avatar,
+    name,
+    country,
+    city,
+    address,
+    timePeriod,
+    activity,
+    Bool,
+    navigation,
+  ) => {
     // Update firebase document
     Bool
-      ? await updateUserAvatar(avatar, name, country, city, address)
+      ? await updateUserAvatar(
+          avatar,
+          name,
+          country,
+          city,
+          address,
+          timePeriod,
+          activity,
+          navigation,
+        )
       : firestore()
           .collection('Users')
           .doc(user['uid'])
@@ -220,6 +388,7 @@ const AuthContextProvider = props => {
             country: country,
             city: city,
             address: address,
+            timePeriod: timePeriod,
           })
           .then(() => {
             const data = {
@@ -227,29 +396,37 @@ const AuthContextProvider = props => {
               country: country,
               city: city,
               address: address,
+              timePeriod: timePeriod,
               avatar: user['avatar'],
               email: user['email'],
               phoneNumber: user['phoneNumber'],
-              timePeriod: user['timePeriod'],
               DOB: user['DOB'],
               gender: user['gender'],
               uid: user['uid'],
             };
             AsyncStorage.setItem('User', JSON.stringify(data));
             setUser(data);
+            activity(false);
+            navigation.navigate('Profile');
             setTimeout(() => {
               alert('Your Information is up-to Date!');
             }, 3000);
           });
   };
-
   const handleSignOut = async navigation => {
+    await AsyncStorage.removeItem('User');
+    await AsyncStorage.clear();
     await auth()
       .signOut()
       .then(async () => {
-        await AsyncStorage.clear();
         navigation.replace('Registration');
       });
+  };
+
+  // handleSignOut();
+
+  const resendVerification = () => {
+    auth().currentUser.sendEmailVerification();
   };
 
   return (
@@ -262,6 +439,9 @@ const AuthContextProvider = props => {
         handleSignOut,
         recoverPass,
         UpdateUser,
+        resendVerification,
+        handleFacebook,
+        handleGoogle,
       }}>
       {props.children}
     </AuthContext.Provider>
@@ -269,3 +449,6 @@ const AuthContextProvider = props => {
 };
 
 export default AuthContextProvider;
+
+//Auth Context
+export const AuthContext = createContext();

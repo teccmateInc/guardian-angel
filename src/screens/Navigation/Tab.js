@@ -1,10 +1,13 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import 'react-native-gesture-handler';
 
 import {Theme} from '../../../style';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+
+// Async Storage
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 //Screens
 import Home from '../Tab/Home';
@@ -15,6 +18,17 @@ import Profile from '../Tab/Profile';
 const Tab = createBottomTabNavigator();
 
 export default function BottomTab({navigation}) {
+  useEffect(() => {
+    userCheck();
+  });
+
+  const userCheck = async () => {
+    const getUser = await AsyncStorage.getItem('User');
+    if (getUser === null || getUser === {}) {
+      navigation.replace('Registration');
+    }
+  };
+
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({

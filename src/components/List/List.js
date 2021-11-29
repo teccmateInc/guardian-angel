@@ -7,20 +7,38 @@ import * as Animatable from 'react-native-animatable';
 import {IconButton} from 'react-native-paper';
 
 export default function List(props) {
-  const {navigation, remove, Type, Data, index, showModal} = props;
+  const {Type, Data, index, handleSubmit, handleRemove, loader} = props;
 
-  const handleBtn = (x, y, z) => {
-    Type === 'angel'
-      ? navigation.navigate('GuardiansEdit', {
-          type: 'edit',
-          angel_n: Data.name,
-          angel_e: Data.email,
-          angel_r: Data.relation,
-        })
-      : Type === 'evidence'
-      ? showModal(x, y, z)
-      : null;
+  const handleSubmitBtn = () => {
+    if (Type === 'angel') {
+      handleSubmit(Data.name, Data.email, Data.relation, Data.id);
+    } else if (Type === 'evidence') {
+      handleSubmit(Data.url, Data.lat, Data.long);
+    } else {
+      handleSubmit();
+    }
   };
+
+  const handleDeleteBtn = () => {
+    if (Type === 'angel') {
+      loader(true);
+      handleRemove(Data.id, loader);
+    } else if (Type === 'evidence') {
+      loader(true);
+      handleRemove(Data.id, Data.name, loader);
+    } else {
+      handleRemove();
+    }
+  };
+
+  const btnIcon =
+    Type === 'angel'
+      ? 'account-edit'
+      : Type === 'evidence'
+      ? 'play-circle'
+      : Type === 'req'
+      ? 'plus'
+      : 'replay';
 
   return (
     <Animatable.View
@@ -31,9 +49,9 @@ export default function List(props) {
       <View
         style={{
           backgroundColor: Theme.colors.accent + '80',
-          borderBottomWidth: 2,
           borderBottomColor: Theme.colors.placeholder,
-          height: 80,
+          borderBottomWidth: 2,
+          padding: 10,
           marginLeft: 20,
           marginBottom: 20,
           justifyContent: 'center',
@@ -43,83 +61,85 @@ export default function List(props) {
           style={{
             display: 'flex',
             flexDirection: 'row',
+            alignItems: 'center',
           }}>
-          <View style={{flex: 1}}>
-            <Text
-              numberOfLines={1}
-              style={{
-                fontFamily: 'Montserrat-Bold',
-                fontSize: 16,
-                marginHorizontal: 10,
-                color: Theme.colors.placeholder,
-              }}>
-              {Data.name}
-            </Text>
-            <Text
-              style={{
-                fontFamily: 'Montserrat-Medium',
-                fontSize: 12,
-                marginHorizontal: 10,
-                color: Theme.colors.shadow,
-              }}>
-              {Type === 'angel'
-                ? Data.email
-                : Type === 'evidence'
-                ? 'Duration: ' + Data.duration + ' mins'
-                : null}
-            </Text>
-            <Text
-              style={{
-                fontFamily: 'Montserrat-Medium',
-                fontSize: 12,
-                marginHorizontal: 10,
-                color: Theme.colors.shadow,
-              }}>
-              {Type === 'angel'
-                ? 'Relationship: ' + Data.relation
-                : Type === 'evidence'
-                ? 'Format: ' + Data.format
-                : null}
-            </Text>
+          <View style={{flex: 1, marginHorizontal: 10}}>
+            {Data.name ? <TitleHandler data={Data.name} /> : null}
+            {Data.email ? <TextHandler data={Data.email} /> : null}
+            {Data.relation ? (
+              <TextHandler data={Data.relation} label="Relationship: " />
+            ) : null}
+            {Data.duration ? (
+              <TextHandler data={Data.duration} label="Duration in min: " />
+            ) : null}
+            {Data.format ? (
+              <TextHandler data={Data.format} label="Format: " />
+            ) : null}
           </View>
           <View
             style={{
               flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-              alignContent: 'center',
               alignSelf: 'center',
               marginHorizontal: 5,
             }}>
-            <IconButton
-              icon={
-                Type === 'angel'
-                  ? 'account-edit'
-                  : Type === 'evidence'
-                  ? 'play-circle'
-                  : 'replay'
-              }
-              style={{
-                backgroundColor: Theme.colors.placeholder,
-                borderRadius: 0,
-              }}
-              color="#fff"
-              size={30}
-              onPress={() => handleBtn(Data.url, Data.lat, Data.long)}
-            />
-            <IconButton
-              icon="delete-outline"
-              style={{
-                backgroundColor: Theme.colors.placeholder,
-                borderRadius: 0,
-              }}
-              color="#fff"
-              size={30}
-              onPress={() => (Type === 'angel' ? remove(Data.email) : null)}
-            />
+            <IconHandler icon={btnIcon} handlePress={handleSubmitBtn} />
+            {handleRemove ? (
+              <IconHandler
+                icon="delete-outline"
+                handlePress={handleDeleteBtn}
+              />
+            ) : null}
           </View>
         </View>
       </View>
     </Animatable.View>
   );
 }
+
+const TitleHandler = props => {
+  const {label, data} = props;
+  return (
+    <Text
+      numberOfLines={1}
+      style={{
+        fontFamily: 'Montserrat-Bold',
+        fontSize: 16,
+        color: Theme.colors.placeholder,
+      }}>
+      {label ? label : null}
+      {data}
+    </Text>
+  );
+};
+
+const TextHandler = props => {
+  const {label, data} = props;
+  return (
+    <Text
+      numberOfLines={1}
+      style={{
+        fontFamily: 'Montserrat-Medium',
+        fontSize: 14,
+        color: Theme.colors.shadow,
+      }}>
+      {label ? label : null}
+      {data}
+    </Text>
+  );
+};
+
+const IconHandler = props => {
+  const {handlePress, icon} = props;
+  return (
+    <IconButton
+      icon={icon}
+      onPress={() => handlePress()}
+      color="#fff"
+      size={30}
+      style={{
+        backgroundColor: Theme.colors.placeholder,
+        borderRadius: 0,
+      }}
+    />
+  );
+};

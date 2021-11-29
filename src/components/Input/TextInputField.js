@@ -22,6 +22,10 @@ const TextInputField = props => {
 
   return (
     <TextInput
+      placeholder={placeholder}
+      label={label}
+      value={value}
+      onChangeText={onChangeText}
       theme={Theme}
       style={
         style
@@ -61,10 +65,6 @@ const TextInputField = props => {
           />
         ) : null
       }
-      placeholder={placeholder}
-      label={label}
-      value={value}
-      onChangeText={onChangeText}
     />
   );
 };

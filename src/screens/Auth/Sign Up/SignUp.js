@@ -1,5 +1,5 @@
 import React, {useState, useRef, useContext} from 'react';
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity, Linking} from 'react-native';
 
 //Style
 import Style, {Theme} from '../../../../style';
@@ -12,12 +12,14 @@ import Btn from '../../../components/Button/Btn';
 
 //Context
 import {AuthContext} from '../../Context/AuthContext';
+import {LanguageContext} from '../../Context/LanguageContext';
 
 export default function SignUp(props) {
   const {setActive, navigation} = props;
 
   //Context
   const {signUp} = useContext(AuthContext);
+  const {Lang} = useContext(LanguageContext);
 
   //State
   const [status, setStatus] = useState(true);
@@ -88,14 +90,14 @@ export default function SignUp(props) {
           <Text style={Style.AuthHeading}>Create</Text>
 
           <Animatable.View animation={fadeUp} duration={800} delay={1400}>
-            <Text style={Style.AuthSubHeading}>Your own Account!</Text>
+            <Text style={Style.AuthSubHeading}>{Lang[21]}!</Text>
           </Animatable.View>
         </Animatable.View>
 
         <Animatable.View animation={fadeUp} duration={800} delay={1200}>
           <TextInput
             leftIcon="account"
-            label="Full Name"
+            label={Lang[0]}
             value={username}
             onChangeText={text => setName(text)}
           />
@@ -104,7 +106,7 @@ export default function SignUp(props) {
         <Animatable.View animation={fadeUp} duration={800} delay={1400}>
           <TextInput
             leftIcon="email"
-            label="Email"
+            label={Lang[1]}
             value={email}
             onChangeText={text => validateEmail(text)}
           />
@@ -112,7 +114,7 @@ export default function SignUp(props) {
             type="error"
             visible={emailErrors()}
             style={{marginHorizontal: 20}}>
-            * Email address is invalid!
+            * {Lang[1]} address is invalid!
           </HelperText>
         </Animatable.View>
 
@@ -127,7 +129,7 @@ export default function SignUp(props) {
             rightIcon={privacy ? 'eye' : 'eye-off'}
             rightIconPress={() => setPrivacy(!privacy)}
             secureTextEntry={privacy}
-            label="Password"
+            label={Lang[2]}
             value={pass}
             onChangeText={text => setPass(text)}
           />
@@ -147,8 +149,8 @@ export default function SignUp(props) {
             visible={passErrors()}
             style={{marginHorizontal: 20}}>
             {pass.length <= 8
-              ? '* your password should be at least enter 8 character long!'
-              : '* Those passwords didn’t match. Try again!'}
+              ? `* your ${Lang[2]} should be at least enter 8 character long!`
+              : `* Those ${Lang[2]}s didn’t match. Try again!`}
           </HelperText>
         </Animatable.View>
 
@@ -159,7 +161,13 @@ export default function SignUp(props) {
           style={Style.flexContainer}>
           <Text style={Style.AuthPara}>
             By Signing Up you agree to all{' '}
-            <Text style={{color: Theme.colors.primary}}>
+            <Text
+              style={{color: Theme.colors.primary}}
+              onPress={() =>
+                Linking.openURL(
+                  'https://my-guardian-angels.web.app/terms-and-condition',
+                )
+              }>
               Terms and Condition
             </Text>{' '}
             of Guardian Angel
@@ -179,7 +187,7 @@ export default function SignUp(props) {
           <Text style={Style.AuthPara}>
             Already have an account.{' '}
             <TouchableOpacity onPress={() => navigateSignIn()}>
-              <Text style={Style.AuthParaHighlight}>Sign In!</Text>
+              <Text style={Style.AuthParaHighlight}>{Lang[17]}!</Text>
             </TouchableOpacity>
           </Text>
         </Animatable.View>

@@ -8,17 +8,22 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 //Components
 import Header from '../../../components/Header/Header';
+import Btn from '../../../components/Button/Btn';
 import List from '../../../components/List/List';
+import Loader from '../../../components/Loader/Loader';
 
 //Context Data
 import {GuardianContext} from '../../Context/GuardianContext';
+import {LanguageContext} from '../../Context/LanguageContext';
 
 export default function GuardiansList({navigation}) {
   const [search, setSearch] = useState('');
   const [viewMore, setViewMore] = useState(6);
+  const [loader, setLoader] = useState(false);
 
   //Context Calling
-  const {angels, removeAngel} = useContext(GuardianContext);
+  const {reqCount, angels, removeAngel} = useContext(GuardianContext);
+  const {Lang} = useContext(LanguageContext);
 
   let filterAngels = angels.filter(item => {
     return (
@@ -27,12 +32,52 @@ export default function GuardiansList({navigation}) {
     );
   });
 
+  const handleNavParams = (x, y, z, id) => {
+    navigation.navigate('GuardiansEdit', {
+      type: 'edit',
+      angel_n: x,
+      angel_e: y,
+      angel_r: z,
+      id,
+    });
+  };
+
   return (
     <View style={{flex: 1}}>
       <Header
-        title="Angels"
+        title={Lang[24]}
         subtitle="Make your Guardian Angels List easily."
       />
+
+      <Btn
+        style={{marginHorizontal: 20, marginVertical: 10}}
+        label="Add More Guardian Angels"
+        icon="plus"
+        onPress={() =>
+          navigation.navigate('GuardiansEdit', {
+            type: 'add',
+            angel_n: '',
+            angel_e: '',
+            angel_r: '',
+          })
+        }
+      />
+      <View style={{marginHorizontal: 20, marginVertical: 10}}>
+        <Btn
+          style={{margin: 0}}
+          label={'Check Request ' + reqCount}
+          icon="plus"
+          onPress={() => navigation.navigate('GuardiansReq')}
+        />
+
+        <Text
+          style={{
+            fontFamily: 'Montserrat',
+            color: Theme.colors.primary,
+          }}>
+          You currently have {reqCount} Request
+        </Text>
+      </View>
 
       <Searchbar
         style={{marginHorizontal: 20, marginVertical: 10}}
@@ -41,22 +86,6 @@ export default function GuardiansList({navigation}) {
         value={search}
         onChangeText={no => setSearch(no)}
       />
-
-      <Button
-        style={{marginHorizontal: 20, marginVertical: 10}}
-        color={Theme.colors.primary}
-        icon="plus"
-        mode="contained"
-        onPress={() =>
-          navigation.navigate('GuardiansEdit', {
-            type: 'add',
-            angel_n: '',
-            angel_e: '',
-            angel_r: '',
-          })
-        }>
-        Add More Guardian Angels
-      </Button>
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{flex: 1, marginTop: 10}}>
@@ -67,8 +96,9 @@ export default function GuardiansList({navigation}) {
                 Data={data}
                 key={index}
                 index={index}
-                remove={e => removeAngel(e)}
-                navigation={navigation}
+                loader={setLoader}
+                handleSubmit={handleNavParams}
+                handleRemove={removeAngel}
               />
             );
           })}
@@ -100,34 +130,7 @@ export default function GuardiansList({navigation}) {
           ) : null}
         </View>
       </ScrollView>
-      {/* <View
-        style={{
-          position: 'absolute',
-          width,
-          height,
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: '#00000090',
-          elevation: 5,
-        }}>
-        <Text
-          style={{
-            fontSize: 24,
-            fontFamily: 'Poppins-Bold',
-            color: '#fff',
-            textAlign: 'center',
-            margin: 10,
-            padding: 10,
-            // borderColor: Theme.colors.primary,
-            // borderWidth: 2,
-            textShadowColor: Theme.colors.placeholder,
-            textShadowOffset: {width: 0, height: 0},
-            textShadowRadius: 20,
-          }}>
-          This Screen is under Development. It will be available soon!!
-        </Text>
-      </View> */}
+      {loader ? <Loader /> : null}
     </View>
   );
 }

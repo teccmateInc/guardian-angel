@@ -5,7 +5,6 @@ import {AuthContext} from './AuthContext';
 
 //GeoLocation
 import Geolocation from '@react-native-community/geolocation';
-export const LocationContext = createContext();
 
 const LocationContextProvider = props => {
   //State
@@ -94,3 +93,4 @@ const LocationContextProvider = props => {
 };
 
 export default LocationContextProvider;
+export const LocationContext = createContext();

@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {View, TouchableOpacity} from 'react-native';
 
 //Style
-import {width} from '../../../style';
+import {Theme, width, height} from '../../../style';
 import {Modal, Portal, Provider} from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -18,19 +18,30 @@ export default function ModalPlayer(props) {
   const btnAction = x => {
     x === 'pause' ? setPause(!pause) : x === 'mute' ? setMute(!mute) : null;
   };
-  console.log('Link Arae h --> ' + link);
+
   return (
     <Provider>
       <Portal>
         <Modal visible={visible} onDismiss={hideModal}>
-          <View>
+          <View
+            style={{
+              alignSelf: 'center',
+              height: width - 50,
+              width: width - 100,
+              borderWidth: 5,
+              borderTopLeftRadius: 10,
+              borderTopRightRadius: 10,
+              borderBottomWidth: 0,
+              borderColor: Theme.colors.shadow,
+              backgroundColor: Theme.colors.placeholder,
+            }}>
             <Video
               source={{uri: link}}
               repeat={false}
               resizeMode="contain"
               // resizeMode="cover"
               poster="https://firebasestorage.googleapis.com/v0/b/my-guardian-angels.appspot.com/o/Background%2FPlay.png?alt=media&token=6d9d417c-dc0e-4a3e-9d2e-b6d781b05564"
-              style={{width: width, height: 400}}
+              style={{width: width - 100, height: width - 50}}
               paused={pause}
               muted={mute}
             />
@@ -44,7 +55,7 @@ export default function ModalPlayer(props) {
                 flex: 1,
                 elevation: 5,
                 borderRadius: 50,
-                backgroundColor: '#000000',
+                backgroundColor: Theme.colors.shadow,
                 justifyContent: 'center',
                 alignItems: 'center',
               }}
@@ -60,7 +71,7 @@ export default function ModalPlayer(props) {
                 flex: 1,
                 elevation: 5,
                 borderRadius: 50,
-                backgroundColor: '#00000085',
+                backgroundColor: Theme.colors.shadow + 85,
                 justifyContent: 'center',
                 alignItems: 'center',
               }}
@@ -81,7 +92,7 @@ export default function ModalPlayer(props) {
                 flex: 1,
                 elevation: 5,
                 borderRadius: 50,
-                backgroundColor: '#00000085',
+                backgroundColor: Theme.colors.shadow + 85,
                 justifyContent: 'center',
                 alignItems: 'center',
               }}
@@ -93,8 +104,21 @@ export default function ModalPlayer(props) {
               />
             </TouchableOpacity>
           </View>
-          <View>
-            <Maps currentLongitude={long} currentLatitude={lat} />
+          <View
+            style={{
+              alignSelf: 'center',
+              width: width - 100,
+              borderWidth: 5,
+              borderBottomLeftRadius: 5,
+              borderBottomRightRadius: 5,
+              borderColor: Theme.colors.shadow,
+            }}>
+            <Maps
+              currentLongitude={long}
+              currentLatitude={lat}
+              styleWidth={width - 110}
+              styleHeight={width - 200}
+            />
           </View>
         </Modal>
       </Portal>

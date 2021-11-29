@@ -7,11 +7,18 @@ import LinearGradient from 'react-native-linear-gradient';
 import * as Animatable from 'react-native-animatable';
 import {Avatar, IconButton} from 'react-native-paper';
 
+//Component
+import Btn from '../Button/Btn';
+
 //Image
 import Profile from '../../assets/Profile.png';
 
+//Context
+import {AuthContext} from '../../screens/Context/AuthContext';
+
 export default function Header(props) {
   const {title, subtitle} = props;
+
   return (
     <Animatable.View animation={'fadeInDown'} duration={800} delay={1000}>
       <LinearGradient
@@ -64,7 +71,10 @@ export default function Header(props) {
 }
 
 export function ProfileHeader(props) {
-  const {title, name, email, avatar, navigation} = props;
+  const {title, name, email, avatar, btnLabel, navigation} = props;
+
+  //Context
+  const {handleSignOut} = useContext(AuthContext);
 
   return (
     <Animatable.View animation={'fadeInDown'} duration={800} delay={1000}>
@@ -77,28 +87,11 @@ export function ProfileHeader(props) {
         start={{x: 0, y: 0.5}}
         end={{x: 0.9, y: -0.5}}
         style={{
-          height: 200,
+          height: 180,
           backgroundColor: Theme.colors.primary,
           // justifyContent: 'center',
           elevation: 10,
         }}>
-        <Animatable.View animation={'fadeInDown'} duration={800} delay={1000}>
-          {title ? (
-            <Text
-              style={{
-                fontFamily: 'Montserrat-Bold',
-                fontSize: 28,
-                color: '#fff',
-                marginVertical: 10,
-                marginHorizontal: 20,
-                textShadowColor: Theme.colors.shadow,
-                textShadowOffset: {width: 4, height: 4},
-                textShadowRadius: 8,
-              }}>
-              {title}
-            </Text>
-          ) : null}
-        </Animatable.View>
         <Animatable.View
           animation={'fadeInDown'}
           duration={800}
@@ -106,11 +99,45 @@ export function ProfileHeader(props) {
           style={{
             display: 'flex',
             flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginVertical: 10,
+            marginHorizontal: 20,
+          }}>
+          {title ? (
+            <Text
+              style={{
+                fontFamily: 'Montserrat-Bold',
+                fontSize: 28,
+                color: '#fff',
+                textShadowColor: Theme.colors.shadow,
+                textShadowOffset: {width: 4, height: 4},
+                textShadowRadius: 8,
+              }}>
+              {title}
+            </Text>
+          ) : null}
+          <Btn
+            label={btnLabel}
+            icon="logout-variant"
+            style={{width: 150}}
+            color={Theme.colors.shadow}
+            onPress={() => handleSignOut(navigation)}
+          />
+        </Animatable.View>
+        <Animatable.View
+          animation={'fadeInDown'}
+          duration={800}
+          delay={1000}
+          style={{
+            display: 'flex',
+            flex: 1,
+            flexDirection: 'row',
             alignItems: 'center',
           }}>
           <Avatar.Image
             theme={Theme}
-            size={100}
+            size={80}
             source={avatar !== '' ? {uri: avatar} : Profile}
             style={{marginHorizontal: 20, marginVertical: 5, elevation: 10}}
           />
@@ -136,7 +163,7 @@ export function ProfileHeader(props) {
                 <Text
                   style={{
                     flex: 1,
-                    fontSize: 14,
+                    fontSize: 12,
                     fontFamily: 'Montserrat-Medium',
                     color: '#fff',
                   }}>

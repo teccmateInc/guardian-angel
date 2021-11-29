@@ -1,26 +1,56 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import {View, Text, ScrollView} from 'react-native';
 
 //Style
-import styles, {Theme} from '../../../../style';
-import {Button, TextInput} from 'react-native-paper';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {Theme} from '../../../../style';
+import {Button, ActivityIndicator} from 'react-native-paper';
 
 //Components
 import Header from '../../../components/Header/Header';
+import Btn from '../../../components/Button/Btn';
+import TextInputField from '../../../components/Input/TextInputField';
+import Loader from '../../../components/Loader/Loader';
 
 //Context Data
 import {GuardianContext} from '../../Context/GuardianContext';
+import {LanguageContext} from '../../Context/LanguageContext';
 
 export default function GuardiansEdit({route, navigation}) {
-  const {type, angel_n, angel_e, angel_r} = route.params;
+  const {type, angel_n, angel_e, angel_r, id} = route.params;
   const [name, setName] = useState(angel_n);
   const [email, setEmail] = useState(angel_e);
   const [relation, setRelation] = useState(angel_r);
   const [valid, setValid] = useState(false);
+  const [activity, setActivity] = useState(false);
+  const [loader, setLoader] = useState(false);
 
   //Context Calling
-  const {addAngel, reqAngel} = useContext(GuardianContext);
+  const {reqAngel, updateAngel} = useContext(GuardianContext);
+  const {Lang} = useContext(LanguageContext);
+
+  const handleSubmit = () => {
+    if (type === 'add') {
+      setLoader(true);
+      reqAngel(name, email, relation, navigation, setLoader);
+    } else if (type === 'edit') {
+      setLoader(true);
+      updateAngel(id, name, email, relation, navigation, setLoader);
+    }
+
+    setActivity(true);
+    setTimeout(() => {
+      setActivity(false);
+    }, 5000);
+  };
+
+  useEffect(() => {
+    let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (reg.test(angel_e) === false) {
+      return setValid(false);
+    } else {
+      return setValid(true);
+    }
+  }, [angel_e]);
 
   const validateEmail = text => {
     let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -29,66 +59,40 @@ export default function GuardiansEdit({route, navigation}) {
       : (setEmail(text), setValid(true));
   };
 
+  const btnIcon =
+    type === 'add'
+      ? 'account-multiple'
+      : type === 'edit'
+      ? 'account-edit'
+      : null;
+
+  const titleTxt =
+    type === 'add' ? Lang[25] : type === 'edit' ? Lang[26] : null;
+
   return (
     <View style={{flex: 1}}>
-      <Header
-        title={
-          type === 'add' ? 'Add Angels' : type === 'edit' ? 'Edit Angels' : null
-        }
-        subtitle="Who will be your Guardian Angel?"
-      />
+      <Header title={titleTxt} subtitle="Who will be your Guardian Angel?" />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{flex: 1, marginVertical: 20}}>
-          <TextInput
-            left={
-              <TextInput.Icon
-                name={() => (
-                  <Icon name="account" size={25} color={Theme.colors.primary} />
-                )}
-              />
-            }
-            style={{marginHorizontal: 25, marginVertical: 5}}
-            mode="outlined"
-            theme={Theme}
-            label="Full Name"
+          <TextInputField
+            leftIcon="account"
+            label={Lang[0]}
             value={name}
             onChangeText={text => setName(text)}
           />
-          <TextInput
-            left={
-              <TextInput.Icon
-                name={() => (
-                  <Icon name="email" size={25} color={Theme.colors.primary} />
-                )}
-              />
-            }
-            style={{marginHorizontal: 25, marginVertical: 5}}
-            mode="outlined"
-            theme={Theme}
-            label="Email"
+          <TextInputField
+            leftIcon="email"
+            label={Lang[1]}
             value={email}
             onChangeText={text => validateEmail(text)}
           />
-          <TextInput
-            left={
-              <TextInput.Icon
-                name={() => (
-                  <Icon
-                    name="account-switch"
-                    size={25}
-                    color={Theme.colors.primary}
-                  />
-                )}
-              />
-            }
-            style={{marginHorizontal: 25, marginVertical: 5}}
-            mode="outlined"
-            theme={Theme}
-            label="Relationship"
+          <TextInputField
+            leftIcon="account-switch"
+            label={Lang[14]}
             value={relation}
             onChangeText={text => setRelation(text)}
           />
-          <Text
+          {/* <Text
             style={{
               margin: 20,
               textAlign: 'center',
@@ -99,25 +103,21 @@ export default function GuardiansEdit({route, navigation}) {
               Terms and Condition
             </Text>
             .
-          </Text>
-          <Button
-            style={{marginHorizontal: 40, marginVertical: 10}}
+          </Text> */}
+          <Btn
+            style={{marginHorizontal: 40, marginVertical: 20}}
+            label={titleTxt + ' Angel'}
+            disabled={valid ? activity : true}
+            icon={btnIcon}
+            onPress={() => handleSubmit()}
+          />
+          <ActivityIndicator
+            animating={activity}
             color={Theme.colors.primary}
-            disabled={valid ? false : true}
-            icon={
-              type === 'add'
-                ? 'account-multiple'
-                : type === 'edit'
-                ? 'account-edit'
-                : null
-            }
-            mode="contained"
-            onPress={() => reqAngel(name, email, relation)}>
-            {type === 'add' ? 'Add ' : type === 'edit' ? 'Edit ' : null}Guardian
-            Angel
-          </Button>
+          />
         </View>
       </ScrollView>
+      {loader ? <Loader /> : null}
     </View>
   );
 }

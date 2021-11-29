@@ -14,12 +14,14 @@ import TextInput from '../../../components/Input/TextInputField';
 
 //Context
 import {AuthContext} from '../../Context/AuthContext';
+import {LanguageContext} from '../../Context/LanguageContext';
 
 export default function SignIn(props) {
   const {navigation, setActive} = props;
 
   //Context
   const {signIn} = useContext(AuthContext);
+  const {Lang} = useContext(LanguageContext);
 
   //State
   const [status, setStatus] = useState(true);
@@ -27,6 +29,7 @@ export default function SignIn(props) {
   const [pass, setPass] = useState('');
   const [valid, setValid] = useState(false);
   const [check, setCheck] = useState(false);
+  const [privacy, setPrivacy] = useState(true);
 
   const validateEmail = text => {
     let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -74,17 +77,17 @@ export default function SignIn(props) {
         duration={800}
         delay={1000}
         style={Style.AuthView}>
-        <Text style={Style.AuthHeading}>Welcome</Text>
+        <Text style={Style.AuthHeading}>{Lang[19]}</Text>
 
         <Animatable.View animation={fadeUp} duration={800} delay={1400}>
-          <Text style={Style.AuthSubHeading}>Back!</Text>
+          <Text style={Style.AuthSubHeading}>{Lang[20]}!</Text>
         </Animatable.View>
       </Animatable.View>
 
       <Animatable.View animation={fadeUp} duration={800} delay={1000}>
         <TextInput
           leftIcon="email"
-          label="Email"
+          label={Lang[1]}
           value={email}
           onChangeText={text => validateEmail(text)}
         />
@@ -93,8 +96,10 @@ export default function SignIn(props) {
       <Animatable.View animation={fadeUp} duration={800} delay={1200}>
         <TextInput
           leftIcon="lock"
-          secureTextEntry={true}
-          label="Password"
+          rightIcon={privacy ? 'eye' : 'eye-off'}
+          rightIconPress={() => setPrivacy(!privacy)}
+          secureTextEntry={privacy}
+          label={Lang[2]}
           value={pass}
           onChangeText={text => setPass(text)}
         />
@@ -109,7 +114,7 @@ export default function SignIn(props) {
           style={{marginHorizontal: 25, marginBottom: 10}}
           mode="text"
           onPress={() => forgottenPass()}
-          label="Forgotten Password?"
+          label={Lang[3]}
         />
       </Animatable.View>
 

@@ -1,8 +1,8 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {ScrollView, View, Text, Image} from 'react-native';
 
 //Style
-import Style, {Theme} from '../../../style';
+import Style, {Theme, width, height} from '../../../style';
 
 //Library
 import * as Animatable from 'react-native-animatable';
@@ -13,17 +13,37 @@ import SignUp from './Sign Up/SignUp';
 import Recovery from './Sign In/Recovery';
 import SocialLogin from './SocialLogin';
 
+//Component
+import Language from '../../components/Language/Language';
+
 //Assets
 import Banner01 from '../../assets/banners/Banner-01.png';
 
+// Async Storage
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 export default function Registration({navigation}) {
   const [active, setActive] = useState('signin');
+
+  useEffect(() => {
+    userCheck();
+  }, []);
+
+  const userCheck = async () => {
+    const getUser = await AsyncStorage.getItem('User');
+    if (getUser !== null && getUser !== {} && getUser !== undefined) {
+      navigation.replace('Tab');
+    }
+  };
 
   // console.log(height / 2.6);
   return (
     <View style={{backgroundColor: Theme.colors.accent, flex: 1}}>
       <View style={Style.flexContainer}>
-        <Image source={Banner01} style={{width: 340, height: 250}} />
+        <Image
+          source={Banner01}
+          style={{width: width - 50, height: height * 0.3}}
+        />
       </View>
 
       <Animatable.View
@@ -46,6 +66,7 @@ export default function Registration({navigation}) {
           ) : active === 'recovery' ? (
             <Recovery setActive={setActive} />
           ) : null}
+          <Language />
           {active === 'recovery' ? null : (
             <View>
               <View style={{flexDirection: 'row'}}>
@@ -76,7 +97,7 @@ export default function Registration({navigation}) {
                   }}
                 />
               </View>
-              <SocialLogin />
+              <SocialLogin navigation={navigation} />
             </View>
           )}
         </ScrollView>

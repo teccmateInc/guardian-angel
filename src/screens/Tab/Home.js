@@ -1,30 +1,43 @@
-import React, {useState, useContext, useEffect, useRef, createRef} from 'react';
+import React, {
+  useState,
+  useContext,
+  useEffect,
+  useRef,
+  useCallback,
+} from 'react';
 import {
   View,
   Text,
   ScrollView,
   PermissionsAndroid,
   StatusBar,
+  BackHandler,
 } from 'react-native';
+import {useFocusEffect} from '@react-navigation/native';
 
 //Import Recorder
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import VideoRecorder from 'react-native-beautiful-video-recorder';
 
 //Style
-import Style, {Theme, width, height} from '../../../style';
-import {Button, Modal, Portal, Provider} from 'react-native-paper';
+import Style, {width, height} from '../../../style';
+import {Modal, Portal, Provider} from 'react-native-paper';
 
 //Components
 //--> Header
 import Header from '../../components/Header/Header';
 //--> Button
 import Btn from '../../components/Button/Btn';
+//--> Language
+import Language from '../../components/Language/Language';
+//--> Loader
+import Loader from '../../components/Loader/Loader';
 
 //Context
 import {AuthContext} from '../Context/AuthContext';
 import {LocationContext} from '../Context/LocationContext';
 import {RecordContext} from '../Context/RecordContext';
+import {LanguageContext} from '../Context/LanguageContext';
 
 //Audio Func
 const audioRecorderPlayer = new AudioRecorderPlayer();
@@ -41,6 +54,7 @@ export default function Home({navigation}) {
   const [visible, setVisible] = useState(false);
   const [visibleTab, setVisibleTab] = useState(true);
   const [visibleStatus, setVisibleStatus] = useState(false);
+  const [loader, setLoader] = useState(false);
 
   navigation.setOptions({
     tabBarVisible: visibleTab,
@@ -51,8 +65,9 @@ export default function Home({navigation}) {
 
   //Context
   const {user} = useContext(AuthContext);
+  const {Lang} = useContext(LanguageContext);
 
-  const TimePeriod = user['timePeriod'] * 60;
+  const TimePeriod = user ? user['timePeriod'] * 60 : null;
 
   const {getOneTimeLocation, subscribeLocationLocation} =
     useContext(LocationContext);
@@ -61,7 +76,25 @@ export default function Home({navigation}) {
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
 
-  useEffect(async () => {
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        setVisible(true);
+        return true;
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () =>
+        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [visible]),
+  );
+
+  useEffect(() => {
+    permissions();
+  }, []);
+
+  const permissions = async () => {
     const granted = await PermissionsAndroid.check(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
     );
@@ -69,17 +102,17 @@ export default function Home({navigation}) {
     granted
       ? console.log('You can access LOCATION')
       : console.log('ACCESS LOCATION permission denied');
-  }, []);
+  };
 
   const StartStopVidRec = async () => {
-    videoRecorder.current.recordOptions({quality});
+    // videoRecorder.current.recordOptions({quality});
     setVisibleStatus(true);
-    videoRecorder.current.open({maxLength: 60}, data => {
-      handleVidRec(data.uri);
+    videoRecorder.current.open({maxLength: TimePeriod}, data => {
+      handleVidRec(data.uri, setLoader);
     });
     setTimeout(() => {
       setVisibleStatus(false);
-    }, 60 * 1000);
+    }, TimePeriod * 1000);
   };
 
   const StartStopAudioRec = async () => {
@@ -91,9 +124,10 @@ export default function Home({navigation}) {
     setVisibleStatus(true);
     audioRecorderPlayer.startRecorder(Path());
     audioRecorderPlayer.addRecordBackListener();
+
     setTimeout(async () => {
       await StopRec();
-    }, 60 * 1000);
+    }, TimePeriod * 1000);
   };
 
   const Path = () => {
@@ -114,29 +148,19 @@ export default function Home({navigation}) {
   const StopRec = async () => {
     const audio = await audioRecorderPlayer.stopRecorder(Path);
     audioRecorderPlayer.removeRecordBackListener();
-    handleAudRec(dirs, audRecName);
-    alert('Success!');
+    handleAudRec(dirs, audRecName, setLoader);
     hideModal();
     setVisibleTab(true);
     setVisibleStatus(false);
   };
 
-  // const Timer = () => {
-
-  //   return moment().startOf('day').seconds(time).format('mm:ss');
-  // };
-
   return (
     <View style={{flex: 1}}>
       <StatusBar
         backgroundColor="#000"
-        barStyle="dark-content"
-        // hidden={visibleStatus}
+        barStyle={visibleStatus ? 'dark-content' : 'default'}
       />
-      <Header
-        title="Record"
-        subtitle="Record your evidence securely & privately."
-      />
+      <Header title={Lang[22]} subtitle={Lang[29]} />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View
           style={{
@@ -148,53 +172,85 @@ export default function Home({navigation}) {
           <Btn
             icon="video"
             onPress={() => StartStopVidRec()}
-            label="Video Record Evidence"
+            label={Lang[27]}
           />
           <Btn
             icon="microphone"
             onPress={() => StartStopAudioRec()}
-            label="Audio Record Evidence"
+            label={Lang[28]}
           />
         </View>
         <View>
           <Text style={Style.para}>
-            Your Default Recording timing is {TimePeriod} seconds. You can
-            increase or decrease this Time period from Profile Settings.
+            Your {Lang[7]} is {TimePeriod} seconds. {Lang[30]}
           </Text>
         </View>
         <View
           style={{marginVertical: 20, padding: 10, backgroundColor: '#fff'}}>
-          <Text style={Style.H4}>Tips</Text>
+          <Text style={Style.H4}>{Lang[31]}</Text>
+          <Text style={Style.para}>{Lang[32]}</Text>
           <Text style={Style.para}>
-            Please use above option when you are in trouble to record evidence.
-            To record Video evidence press Video Recording it will record both
-            video as well as audio but if you want to record Audio evidence only
-            then press on Audio Recording.
+            If the user's device is locked during the VIDEO recording process
+            the evidence will be lost. But If the user's device is locked during
+            the AUDIO recording process the evidence will not be affected.
+          </Text>
+          <Text style={Style.para}>
+            Before Making Evidence make sure your device Location and GPS is on.
           </Text>
         </View>
       </ScrollView>
+
       <VideoRecorder
         ref={ref => {
           videoRecorder.current = ref;
         }}
       />
-      <Provider>
-        <Portal>
-          <Modal
-            visible={visible}
-            onDismiss={hideModal}
-            contentContainerStyle={{
-              backgroundColor: '#000',
-              width: width,
-              height: height,
-              justifyContent: 'center',
-              alignItems: 'center',
-              zIndex: 1000,
-            }}>
-            <Text style={{color: '#111'}}>Please Wait!</Text>
-          </Modal>
-        </Portal>
-      </Provider>
+      <ModelProvider
+        visible={visible}
+        hideModal={hideModal}
+        TimePeriod={TimePeriod}
+      />
+
+      <Language />
+
+      {loader ? <Loader /> : null}
     </View>
   );
 }
+
+const ModelProvider = props => {
+  const {visible, hideModal, TimePeriod} = props;
+  const [count, setCount] = useState(TimePeriod);
+
+  useEffect(() => {
+    setInterval(() => {
+      setCount(prev => prev - 1);
+    }, 1000);
+  }, []);
+
+  setTimeout(() => {
+    clearInterval();
+    setCount(TimePeriod);
+  }, TimePeriod * 1000);
+
+  return (
+    <Provider>
+      <Portal>
+        <Modal
+          dismissable={false}
+          visible={visible}
+          onDismiss={hideModal}
+          contentContainerStyle={{
+            backgroundColor: '#000',
+            width: width,
+            height: height,
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000,
+          }}>
+          <Text style={{color: '#111'}}>Please Wait! {count} sec left.</Text>
+        </Modal>
+      </Portal>
+    </Provider>
+  );
+};

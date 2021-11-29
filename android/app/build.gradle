@@ -121,7 +121,7 @@ def jscFlavor = 'org.webkit:android-jsc:+'
  * on project.ext.react, JavaScript will not be compiled to Hermes Bytecode
  * and the benefits of using Hermes will therefore be sharply reduced.
  */
-def enableHermes = project.ext.react.get("enableHermes", false);
+def enableHermes = project.ext.react.get("enableHermes", true);
 
 android {
     ndkVersion rootProject.ext.ndkVersion
@@ -137,11 +137,12 @@ android {
         applicationId "com.daniyalmalikc.myguardianangel"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0.10"
+        versionCode 6
+        versionName "1.0.16"
         missingDimensionStrategy 'react-native-camera', 'general'
         multiDexEnabled true
     }
+
     splits {
         abi {
             reset()
@@ -209,7 +210,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore'
     implementation 'com.google.firebase:firebase-storage'
 
-    implementation 'com.facebook.android:facebook-android-sdk:[5,6)'
+    implementation 'com.facebook.android:facebook-android-sdk:[8,9)'
     implementation "com.facebook.react:react-native:0.58.3"
 
     implementation(project(':react-native-maps')){

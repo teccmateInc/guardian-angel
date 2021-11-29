@@ -12,14 +12,17 @@ import Profile from '../../assets/Profile.png';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 
 export default function Maps(props) {
-  const {currentLatitude, currentLongitude} = props;
+  const {currentLatitude, currentLongitude, styleWidth, styleHeight} = props;
 
   const lat = Number(currentLatitude);
   const long = Number(currentLongitude);
 
   return (
     <MapView
-      style={{width: width, height: 250}}
+      style={{
+        width: styleWidth ? styleWidth : width,
+        height: styleHeight ? styleHeight : 250,
+      }}
       provider={PROVIDER_GOOGLE}
       // showsUserLocation
       initialRegion={{

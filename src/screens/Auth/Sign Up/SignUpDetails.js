@@ -1,4 +1,4 @@
-import React, {useState, useRef, useContext} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {View, Text, ScrollView} from 'react-native';
 
 //Style
@@ -20,8 +20,22 @@ import PhoneNo from '../../../components/Input/PhoneNo';
 // Context
 import {AuthContext} from '../../Context/AuthContext';
 
+// Async Storage
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 export default function SignUpDetails({route, navigation}) {
   const {email, username, uid} = route.params;
+
+  useEffect(() => {
+    userCheck();
+  });
+
+  const userCheck = async () => {
+    const getUser = await AsyncStorage.getItem('User');
+    if (getUser !== null && getUser !== {} && getUser !== undefined) {
+      navigation.replace('Tab');
+    }
+  };
 
   //Context
   const {signUpInfo} = useContext(AuthContext);
@@ -52,7 +66,24 @@ export default function SignUpDetails({route, navigation}) {
     setExpandedTime(!expandedTime);
   };
 
-  const DOB = `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`;
+  const months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+
+  const DOB = `${
+    months[date.getMonth()]
+  } ${date.getDate()}, ${date.getFullYear()}`;
 
   const handleProceed = () => {
     signUpInfo(
@@ -142,83 +173,88 @@ export default function SignUpDetails({route, navigation}) {
           </Text>
         </View>
 
-        <View style={Style.paper}>
-          <Text style={Style.H3}>Evidence Time Period:</Text>
-          <Animatable.View animation="fadeInUp" duration={800} delay={800}>
-            <Text style={Style.H5}>
-              Please select your lenght of time for Evidence gathering:
-            </Text>
-            <ListAccordion
-              title={timePeriod + ' mins'}
-              leftIcon="clock-outline"
-              expanded={expandedTime}
-              handlePress={handlePressTime}
-              ListItem={timeList}
-            />
-          </Animatable.View>
-        </View>
+        <View style={{marginHorizontal: 10}}>
+          <View style={Style.paper}>
+            <Text style={Style.H3}>Evidence Time Period:</Text>
+            <Animatable.View animation="fadeInUp" duration={800} delay={800}>
+              <Text style={Style.H5}>
+                Please select your lenght of time for Evidence gathering:
+              </Text>
+              <ListAccordion
+                title={timePeriod + ' mins'}
+                leftIcon="clock-outline"
+                expanded={expandedTime}
+                handlePress={handlePressTime}
+                ListItem={timeList}
+              />
+            </Animatable.View>
+          </View>
 
-        <View style={Style.paper}>
-          <Text style={Style.H3}>Personal Information:</Text>
-          <Animatable.View animation="fadeInUp" duration={800} delay={1000}>
-            <Text style={Style.H5}>Phone Number:</Text>
-            <PhoneNo
-              value={phoneNo}
-              onTextChange={text => setPhoneNo(text)}
-              onFormatChange={text => setFormattedValue(text)}
-            />
-          </Animatable.View>
+          <View style={Style.paper}>
+            <Text style={Style.H3}>Personal Information:</Text>
+            <Animatable.View animation="fadeInUp" duration={800} delay={1000}>
+              <Text style={Style.H5}>Phone Number:</Text>
+              <PhoneNo
+                value={phoneNo}
+                onTextChange={text => setPhoneNo(text)}
+                onFormatChange={text => setFormattedValue(text)}
+              />
+            </Animatable.View>
 
-          <Animatable.View animation="fadeInUp" duration={800} delay={1200}>
-            <View style={{marginVertical: 5}}>
-              <Text style={Style.H5}>Date of Birth:</Text>
-              <DatePickerInput value={date} onChange={data => setDate(data)} />
-            </View>
-          </Animatable.View>
+            <Animatable.View animation="fadeInUp" duration={800} delay={1200}>
+              <View style={{marginVertical: 5}}>
+                <Text style={Style.H5}>Date of Birth:</Text>
+                <DatePickerInput
+                  value={date}
+                  onChange={data => setDate(data)}
+                />
+              </View>
+            </Animatable.View>
 
-          <Animatable.View animation="fadeInUp" duration={800} delay={1400}>
-            <Text style={Style.H5}>Gender:</Text>
-            <ListAccordion
-              title={gender}
-              leftIcon="account"
-              expanded={expanded}
-              handlePress={handlePress}
-              ListItem={genderList}
-            />
-          </Animatable.View>
-        </View>
+            <Animatable.View animation="fadeInUp" duration={800} delay={1400}>
+              <Text style={Style.H5}>Gender:</Text>
+              <ListAccordion
+                title={gender}
+                leftIcon="account"
+                expanded={expanded}
+                handlePress={handlePress}
+                ListItem={genderList}
+              />
+            </Animatable.View>
+          </View>
 
-        <View style={Style.paper}>
-          <Text style={Style.H3}>Address:</Text>
-          <Animatable.View animation="fadeInUp" duration={800} delay={1600}>
-            <Text style={Style.H5}>Country:</Text>
-            <TextInput
-              leftIcon="map-marker"
-              label="Country"
-              value={country}
-              onChangeText={text => setCountry(text)}
-            />
-          </Animatable.View>
+          <View style={Style.paper}>
+            <Text style={Style.H3}>Address:</Text>
+            <Animatable.View animation="fadeInUp" duration={800} delay={1600}>
+              <Text style={Style.H5}>Country:</Text>
+              <TextInput
+                leftIcon="map-marker"
+                label="Country"
+                value={country}
+                onChangeText={text => setCountry(text)}
+              />
+            </Animatable.View>
 
-          <Animatable.View animation="fadeInUp" duration={800} delay={1800}>
-            <Text style={Style.H5}>City:</Text>
-            <TextInput
-              leftIcon="city-variant-outline"
-              label="City"
-              value={city}
-              onChangeText={text => setCity(text)}
-            />
-          </Animatable.View>
+            <Animatable.View animation="fadeInUp" duration={800} delay={1800}>
+              <Text style={Style.H5}>City:</Text>
+              <TextInput
+                leftIcon="city-variant-outline"
+                label="City"
+                value={city}
+                onChangeText={text => setCity(text)}
+              />
+            </Animatable.View>
 
-          <Animatable.View animation="fadeInUp" duration={800} delay={2000}>
-            <Text style={Style.H5}>Complete Street Address:</Text>
-            <TextInput
-              leftIcon="home"
-              label="Address"
-              value={address}
-              onChangeText={text => setAddress(text)}
-            />
-          </Animatable.View>
+            <Animatable.View animation="fadeInUp" duration={800} delay={2000}>
+              <Text style={Style.H5}>Complete Street Address:</Text>
+              <TextInput
+                leftIcon="home"
+                label="Address"
+                value={address}
+                onChangeText={text => setAddress(text)}
+              />
+            </Animatable.View>
+          </View>
         </View>
 
         <Btn

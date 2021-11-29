@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4.65,
   },
   paper: {
-    margin: 10,
+    marginVertical: 10,
     paddingVertical: 10,
     borderWidth: 2,
     borderColor: Theme.colors.shadow,
@@ -141,6 +141,26 @@ const styles = StyleSheet.create({
   AuthParaHighlight: {
     color: Theme.colors.primary,
     top: 3,
+  },
+  LoaderContainer: {
+    position: 'absolute',
+    width,
+    height,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#00000090',
+    elevation: 5,
+  },
+  LoaderText: {
+    fontSize: 24,
+    fontFamily: 'Poppins-Bold',
+    color: '#fff',
+    textAlign: 'center',
+    margin: 5,
+    textShadowColor: Theme.colors.placeholder,
+    textShadowOffset: {width: 0, height: 0},
+    textShadowRadius: 20,
   },
 });
 
